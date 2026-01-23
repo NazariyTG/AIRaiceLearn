@@ -54,11 +54,27 @@ public class Main extends JPanel implements MouseListener{
 
 
 
-    Car cars[] = new Car[COUNTOFCAR];
-    NeuroModel neuroModels[] = new NeuroModel[COUNTOFCAR];
+    //Car cars[] = new Car[COUNTOFCAR];
 
-    boolean isCarAlive[] = new boolean[COUNTOFCAR];
-    Vector2 carsResults[] = new Vector2[COUNTOFCAR];
+
+    double resultsWeight[][];
+    double resultsNeuron[][];
+
+    Car carsWeights[][];
+    Car carsNeurons[][];
+
+    NeuroModel neuroModelsWeightsOrig[] ;
+    NeuroModel neuroModelsNeuronsOrig[] ;
+
+    NeuroModel neuroModelsWeightsLearn[][] ;
+    NeuroModel neuroModelsNeuronsLearn[][] ;
+
+    final static int LEARNTYPECOUNT = 3;
+
+
+    boolean isCarAliveWeight[][];
+    boolean isCarAliveNeurons[][];
+//    Vector2 carsResults[][];
 
     int currentWeight= 0;
     int currentNeuron= 0;
@@ -73,14 +89,97 @@ public class Main extends JPanel implements MouseListener{
 // Vector2[] carsResults
 
 
+    void setLearn(){
+        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
+            neuroModelsWeightsLearn[gWeight][0] = new NeuroModel(nModel);
+            neuroModelsWeightsLearn[gWeight][1] = new NeuroModel(nModel);
+            neuroModelsWeightsLearn[gWeight][2] = new NeuroModel(nModel);
+        }
+        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
+            neuroModelsNeuronsLearn[gNeurons][0] = new NeuroModel(nModel);
+            neuroModelsNeuronsLearn[gNeurons][1] = new NeuroModel(nModel);
+            neuroModelsNeuronsLearn[gNeurons][2] = new NeuroModel(nModel);
+        }
+
+        for(int w = 0; w < countOfAllWeght; w++) {
+            for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                carsWeights[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, 500, 240);
+            }
+        }
+        for(int w = 0; w < countOfALLNeurons; w++) {
+            for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                carsNeurons[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, 500, 240);
+            }
+        }
+
+
+
+        for(int j = 0; j <LEARNTYPECOUNT; j++){
+            for(int i = 0 ; i < countOfAllWeght; i ++){
+                isCarAliveWeight[i][j] = true;
+            }
+            for(int i = 0 ; i < countOfALLNeurons; i++){
+                isCarAliveNeurons[i][j] = true;
+            }
+
+
+        }
+
+
+
+
+    }
+
+    void resetAllCars(){
+
+
+        for(int j = 0; j <LEARNTYPECOUNT; j++){
+            for(int i = 0 ; i < countOfAllWeght; i ++){
+                isCarAliveWeight[i][j] = true;
+                carsWeights[i][j].position = new Vector2(map.startStop.p1);
+                carsWeights[i][j].rotation = 0;
+            }
+            for(int i = 0 ; i < countOfALLNeurons; i++){
+                isCarAliveNeurons[i][j] = true;
+                carsNeurons[i][j].position = new Vector2(map.startStop.p1);
+                carsNeurons[i][j].rotation = 0;
+            }
+
+        }
+    }
+
+    void changeLearn(double mylt){
+        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
+
+            neuroModelsWeightsLearn[gWeight][1].changeWeith(gWeight, mylt);
+            neuroModelsWeightsLearn[gWeight][2].changeWeith(gWeight, mylt);
+        }
+        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
+
+            neuroModelsNeuronsLearn[gNeurons][1].changeB(gNeurons, mylt);
+            neuroModelsNeuronsLearn[gNeurons][2].changeB(gNeurons, mylt );
+        }
+    }
+
+
+    void learn(){
+
+    }
+
 
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        for(Car c: cars){
-            c.g = g;
+        for(int w = 0; w < countOfAllWeght; w++) {
+            for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                carsWeights[w][i].g = g;
+            }
+        }
+        for(int w = 0; w < countOfALLNeurons; w++) {
+            for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                carsNeurons[w][i].g = g;
+            }
         }
 
         Point mouseP = MouseInfo.getPointerInfo().getLocation();
@@ -92,78 +191,127 @@ public class Main extends JPanel implements MouseListener{
 
         g.setColor(Color.BLUE);
 
-
-        double distances[][] = new double[COUNTOFCAR][cars[0].countOfRays];
-        for(int carIndex = 0; carIndex < cars.length; carIndex++) {
-            Car car1 = cars[carIndex];
-            for (Line2d l1 : car1.lines) {
-                for (Line2d l2 : mapWalls) {
-                    Vector2 colP = l1.colision(l2);
-                    if (colP != null) {
-                        g.setColor(Color.RED);
-//                    if(ISRENDERCAR) l1.render(g,cam);
-                        g.setColor(Color.BLUE);
-//                        car1.position = new Vector2(-200, 0);
-//                        car1.rotation = 0;
-                        isCarAlive[carIndex] = false;
-                        carsResults[carIndex] = new Vector2(car1.position.subR(map.startStop.p2).length(), time);
-
-                    }
-                }
-            }
+        if(time == 0){
+            resetAllCars();
+        }
 
 
-            for (int i = 0; i < car1.rays.length; i++) {
-                distances[carIndex][i] = 1;
-                for (Line2d l2 : mapWalls) {
-                    Vector2 colP = car1.rays[i].colision(l2);
-                    if (colP != null) {
-                        g.setColor(Color.RED);
-                        if (ISRENDERRAYS) car1.rays[i].render(g, cam);
-                        g.setColor(Color.BLUE);
+        for(int w = 0; w < countOfAllWeght; w++){
+            for(int i = 0; i < LEARNTYPECOUNT; i++ ){
 
-                        double currnetDistance = car1.position.subR(colP).length();
-                        if (distances[carIndex][i] > currnetDistance / car1.radiusView) {
-                            distances[carIndex][i] = currnetDistance / car1.radiusView;
-                            if (ISRENDERRAYS)
-                                g.fillRect((int) colP.subR(cam.position).x, (int) colP.subR(cam.position).y, 10, 10);
+                Car car1 = carsWeights[w][i];
+                double distances[] = new double[car1.countOfRays];
+                for (Line2d l1 : car1.lines) {
+                    for (Line2d l2 : mapWalls) {
+                        Vector2 colP = l1.colision(l2);
+                        if (colP != null) {
+//                            g.setColor(Color.RED);
+                            //                    if(ISRENDERCAR) l1.render(g,cam);
+//                            g.setColor(Color.BLUE);
+                            //                        car1.position = new Vector2(-200, 0);
+                            //                        car1.rotation = 0;
+                            isCarAliveWeight[w][i] = false;
+                            resultsWeight[w][i] =car1.position.subR(map.startStop.p2).length() * distanceVelue + time * timeValue;
+
                         }
-
                     }
                 }
-            }
 
-            if(isCarAlive[carIndex]) {
-                double[] vecMove =  {0,0};
+                for (Line2d l2 : mapWalls) {
 
-                car1.move(vecMove[0]);
-                car1.rot(vecMove[1]);
-                car1.curc();
+                    for (int reyI = 0; reyI < car1.countOfRays; reyI++) {
+                        distances[reyI] = 1;
+                        Vector2 colP = car1.rays[reyI].colision(l2);
+                        if (colP != null) {
+                            g.setColor(Color.RED);
+                            if (ISRENDERRAYS) car1.rays[reyI].render(g, cam);
+                            g.setColor(Color.BLUE);
+
+                            double currnetDistance = car1.position.subR(colP).length();
+                            if (distances[reyI] > currnetDistance / car1.radiusView) {
+                                distances[reyI] = currnetDistance / car1.radiusView;
+                                if (ISRENDERRAYS)
+                                    g.fillRect((int) colP.subR(cam.position).x, (int) colP.subR(cam.position).y, 10, 10);
+                            }
+
+                        }
+                    }
+                }
+                if(isCarAliveWeight[w][i]) {
+                    double[] vecMove = neuroModelsWeightsLearn[w][i].curk(distances);
+
+                    car1.move(vecMove[0]);
+                    car1.rot(vecMove[1]);
+                    car1.curc();
+                }
+
             }
         }
+
+
+//            for (int i = 0; i < car1.rays.length; i++) {
+//                distances[carIndex][i] = 1;
+//                for (Line2d l2 : mapWalls) {
+//                    Vector2 colP = car1.rays[i].colision(l2);
+//                    if (colP != null) {
+//                        g.setColor(Color.RED);
+//                        if (ISRENDERRAYS) car1.rays[i].render(g, cam);
+//                        g.setColor(Color.BLUE);
+//
+//                        double currnetDistance = car1.position.subR(colP).length();
+//                        if (distances[carIndex][i] > currnetDistance / car1.radiusView) {
+//                            distances[carIndex][i] = currnetDistance / car1.radiusView;
+//                            if (ISRENDERRAYS)
+//                                g.fillRect((int) colP.subR(cam.position).x, (int) colP.subR(cam.position).y, 10, 10);
+//                        }
+//
+//                    }
+//                }
+//            }
+
+
         //Colision
         if(CAMERAMODE == 1)
-        cam.position = cars[0].position.subR(new Vector2(750, 500));
+        cam.position = carsWeights[0][0].position.subR(new Vector2(750, 500));
 
         if(ISRENDERCAR) {
-
-            for (Car car : cars) {
-                car.render(g, cam);
+            for(int w = 0; w < countOfAllWeght; w++) {
+                for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                    carsWeights[w][i].render(g, cam);
+                }
+            }
+            for(int w = 0; w < countOfALLNeurons; w++) {
+                for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                    carsNeurons[w][i].render(g, cam);
+                }
             }
         }
 
-
-        if(ISRENDERFIRSVIE) {
-            for (int i = 0; i < distances.length; i++) {
-                g.fillRect(i * WINDOWWITH / cars[0].countOfRays, WINDOWHEINGH / 3, WINDOWWITH / cars[0].countOfRays, (int) -(distances[0][i] - 500));
-                g.fillRect(i * WINDOWWITH / cars[0].countOfRays, WINDOWHEINGH / 3, WINDOWWITH / cars[0].countOfRays, (int) (distances[0][i] - 500));
-            }
-        }
+//
+//        if(ISRENDERFIRSVIE) {
+//            for (int i = 0; i < distances.length; i++) {
+//                g.fillRect(i * WINDOWWITH / cars[0].countOfRays, WINDOWHEINGH / 3, WINDOWWITH / cars[0].countOfRays, (int) -(distances[0][i] - 500));
+//                g.fillRect(i * WINDOWWITH / cars[0].countOfRays, WINDOWHEINGH / 3, WINDOWWITH / cars[0].countOfRays, (int) (distances[0][i] - 500));
+//            }
+//        }
         if(ISRENDERMAP)
         map.render(g, cam);
         if(isMapEditinEctive) map.startStop.render(g, cam);
 
+        boolean isOneAlive = false;
+        for(int j = 0; j <LEARNTYPECOUNT; j++){
+            for(int i = 0 ; i < countOfAllWeght; i ++){
+                if(isCarAliveWeight[i][j]) isOneAlive = true;
 
+            }
+            for(int i = 0 ; i < countOfALLNeurons; i++){
+                if(isCarAliveNeurons[i][j]) isOneAlive = true;
+
+            }
+
+        }
+        time++;
+        if(!isOneAlive) time = 0;
 
 
     }
@@ -173,6 +321,28 @@ public class Main extends JPanel implements MouseListener{
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
 
+        countOfAllWeght = nModel.countOfInpunts * nModel.heightOfModel + (nModel.wightOfModel - 1) * nModel.heightOfModel * nModel.heightOfModel + nModel.heightOfModel * nModel.countofOutput;
+        countOfALLNeurons = nModel.wightOfModel * nModel.heightOfModel + nModel.countofOutput;
+
+        System.out.println("countOfAllWeght: " + countOfAllWeght + " countOfALLNeurons: " + countOfALLNeurons);
+
+        nModel.readFromFile("N_" + "1" + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
+
+        neuroModelsWeightsLearn = new NeuroModel[countOfAllWeght][LEARNTYPECOUNT];
+        neuroModelsNeuronsLearn = new NeuroModel[countOfALLNeurons][LEARNTYPECOUNT];
+
+
+
+        carsWeights = new Car[countOfAllWeght][LEARNTYPECOUNT];
+        carsNeurons = new Car[countOfALLNeurons][LEARNTYPECOUNT];
+
+        resultsWeight = new double[countOfAllWeght][LEARNTYPECOUNT];
+        resultsNeuron = new double[countOfALLNeurons][LEARNTYPECOUNT];
+
+        isCarAliveWeight =  new boolean[countOfAllWeght][LEARNTYPECOUNT];
+        isCarAliveNeurons =  new boolean[countOfALLNeurons][LEARNTYPECOUNT];
+
+        setLearn();
 
 
 

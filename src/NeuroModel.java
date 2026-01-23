@@ -294,9 +294,11 @@ public class NeuroModel {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("NeuroFile not found. Setting random neurouns");
+            this.setRandom(1,1);
         }
     }
-    void changeWeith(int apsoluteI, double value){
+    void setWeith(int apsoluteI, double value){
         if (apsoluteI < countOfInpunts * heightOfModel){
             int x = apsoluteI / heightOfModel;
             int y = apsoluteI % heightOfModel;
@@ -323,7 +325,7 @@ public class NeuroModel {
 
         }
     }
-    void changeB(int apsoluteI, double value){
+    void setB(int apsoluteI, double value){
         if (apsoluteI < countOfInpunts){
             bOnInput[apsoluteI] = value;
             return;
@@ -336,6 +338,93 @@ public class NeuroModel {
             bOnNeurons[x][y] = value;
             return;
 
+        }
+    }
+
+    void changeWeith(int apsoluteI, double value){
+        if (apsoluteI < countOfInpunts * heightOfModel){
+            int x = apsoluteI / heightOfModel;
+            int y = apsoluteI % heightOfModel;
+
+            weightOfIput[x][y] += value;
+            return;
+        }
+
+        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) {
+            int x = (apsoluteI - countOfInpunts * heightOfModel)/ (heightOfModel * heightOfModel);
+            int remainder = apsoluteI % (heightOfModel * heightOfModel);
+
+            int y = remainder / heightOfModel;
+            int z = remainder % heightOfModel;
+
+            weithOfNeurons[x][y][z] += value;
+            return;
+        }else {
+            int x = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) / heightOfModel;     // номер входу
+            int y = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) % heightOfModel;     // позиція у цьому вході
+
+            weightOfOutput[x][y] += value;
+
+
+        }
+    }
+    void changeB(int apsoluteI, double value){
+        if (apsoluteI < countofOutput){
+            bOnOutputs[apsoluteI] += value;
+            return;
+        }
+
+        if (apsoluteI >= countOfInpunts &  apsoluteI <= wightOfModel * heightOfModel) {
+            int x = (apsoluteI - countOfInpunts) / heightOfModel;
+            int y = (apsoluteI - countOfInpunts) % heightOfModel;
+
+            bOnNeurons[x][y] += value;
+            return;
+
+        }
+    }
+
+    double getWeith(int apsoluteI){
+        if (apsoluteI < countOfInpunts * heightOfModel){
+            int x = apsoluteI / heightOfModel;
+            int y = apsoluteI % heightOfModel;
+
+
+            return weightOfIput[x][y];
+        }
+
+        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) {
+            int x = (apsoluteI - countOfInpunts * heightOfModel)/ (heightOfModel * heightOfModel);
+            int remainder = apsoluteI % (heightOfModel * heightOfModel);
+
+            int y = remainder / heightOfModel;
+            int z = remainder % heightOfModel;
+
+
+            return weithOfNeurons[x][y][z];
+        }else {
+            int x = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) / heightOfModel;     // номер входу
+            int y = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) % heightOfModel;     // позиція у цьому вході
+
+
+            return weightOfOutput[x][y];
+
+        }
+    }
+    double getB(int apsoluteI){
+        if (apsoluteI < countofOutput){
+            return bOnOutputs[apsoluteI];
+        }
+
+        if (apsoluteI >= countOfInpunts &  apsoluteI <= wightOfModel * heightOfModel) {
+            int x = (apsoluteI - countOfInpunts) / heightOfModel;
+            int y = (apsoluteI - countOfInpunts) % heightOfModel;
+
+            return bOnNeurons[x][y];
+
+        }
+        else {
+            return 0;
         }
     }
 
