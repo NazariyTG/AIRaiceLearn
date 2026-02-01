@@ -43,12 +43,12 @@ public class MainCarControl extends JPanel implements MouseListener{
 
     int CountOfOutput = 4;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,3,8,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,8,CountOfOutput);
 
 
     int CarFov = 240; /// 240
 
-    int radiusVIEW = 1000;
+    int radiusVIEW = 500;
 
     double FOVCOF = 0.3;
 
@@ -394,7 +394,7 @@ public class MainCarControl extends JPanel implements MouseListener{
             if( resul[0] > resul[1]){
                 myCar.moveAcceleraion(1);
             }else{
-                myCar.moveAcceleraion(1);
+                myCar.moveAcceleraion(-1);
             }
 
 

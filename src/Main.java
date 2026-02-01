@@ -9,18 +9,19 @@ public class Main extends JPanel implements MouseListener{
     static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
-    static int MAXTIMEFORGENERATION = 2000;
+    static int MAXTIMEFORGENERATION = 1000;
 
     //learn
     int timeValue = 2;
     int distanceVelue = 5;
     int colisionValue = 1000;
 
-    final static int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
+    final static int LEARNTYPECOUNT = 5;  // neparni ///////////////////////////
 
 //        double myltipliers[] = {2, 0.2 , 0.02, 0.002, 0.0002,0.00002, 20, 200,2000, };
     double myltipliers[] = {2, 0.2 , 0.02,  0.002,20 };
     //    double myltipliers[] = { 0.02, 0.002, 0.0002, 0.000002,0.00000002,0.000000002};
+//        double myltipliers[] = {  0.00000002,0.000000002};
 //    double myltipliers[] = {0.2 ,2};
     int curentMultp = 0;
 
@@ -95,6 +96,8 @@ public class Main extends JPanel implements MouseListener{
     int[] currentWeightInProgress = new int[COUNTOFCAR];
 
     int currentGeneration = 0;
+
+    Car myCar ;
 
     double deltaLearn = 1;
 // Vector2[] carsResults
@@ -246,20 +249,13 @@ public class Main extends JPanel implements MouseListener{
             for(int j = 0; j < LEARNTYPECOUNT; j++){
                 if (resultsWeight[i][j] < globalMinResult){
 
-                    if(j != (LEARNTYPECOUNT-1.0) /2 ) {
+
 //                    globalMinResult = resultsWeight[i][j];
 //                    nModel.setWeith(i, neuroModelsWeightsLearn[i][j].getWeith(i));
-                        globalMinResult = resultsWeight[i][j];
-                        globalMinIndex[0] = i;
-                        globalMinIndex[1] = j;
-                    }else {
-                        if(coutSameNeurons < myltipliers.length){
-                            globalMinResult = resultsWeight[i][j];
-                            globalMinIndex[0] = i;
-                            globalMinIndex[1] = j;
-                        }
+                    globalMinResult = resultsWeight[i][j];
+                    globalMinIndex[0] = i;
+                    globalMinIndex[1] = j;
 
-                    }
                 }
             }
 
@@ -271,20 +267,13 @@ public class Main extends JPanel implements MouseListener{
 
             for(int j = 0; j < LEARNTYPECOUNT; j++){
                 if (resultsNeuron[i][j] < globalMinResult){
-                    if(j != (LEARNTYPECOUNT-1.0) /2 ) {
-                        globalMinResult = resultsNeuron[i][j];
-                        globalMinIndex[0] = i;
-                        globalMinIndex[1] = j;
-                        isItWeight = false;
+
+                    globalMinResult = resultsNeuron[i][j];
+                    globalMinIndex[0] = i;
+                    globalMinIndex[1] = j;
+                    isItWeight = false;
 //                    nModel.setB(i, neuroModelsNeuronsLearn[i][j].getB(i));
-                    }else {
-                        if(coutSameNeurons < myltipliers.length){
-                            globalMinResult = resultsNeuron[i][j];
-                            globalMinIndex[0] = i;
-                            globalMinIndex[1] = j;
-                            isItWeight = false;
-                        }
-                    }
+
 
                 }
             }
@@ -487,7 +476,7 @@ public class Main extends JPanel implements MouseListener{
                     if( vecMove[0] > vecMove[1]){
                         car1.moveAcceleraion(1);
                     }else{
-                        car1.moveAcceleraion(1);
+                        car1.moveAcceleraion(-1);
                     }
 
 
@@ -657,6 +646,8 @@ public class Main extends JPanel implements MouseListener{
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
 
+        new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, 500, 240);
+
         countOfAllWeght = nModel.countOfInpunts * nModel.heightOfModel + (nModel.wightOfModel - 1) * nModel.heightOfModel * nModel.heightOfModel + nModel.heightOfModel * nModel.countofOutput;
         countOfALLNeurons = nModel.wightOfModel * nModel.heightOfModel + nModel.countofOutput;
 
@@ -763,6 +754,7 @@ public class Main extends JPanel implements MouseListener{
         if (e.getKeyCode() == KeyEvent.VK_J) {
             nModel.readFromFile("N_" + "1" + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
             System.out.println("NeuroModel open");
+            System.out.println("N_" + "1" + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
             setLearn();
             time = 0;
 

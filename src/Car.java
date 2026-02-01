@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Car extends Square{
     double speed = 5;
-    double maxSpeed = 10;
+    double maxSpeed = 30;
     double acceleration = 0.2;
     double rotationSpeed= 2;
 

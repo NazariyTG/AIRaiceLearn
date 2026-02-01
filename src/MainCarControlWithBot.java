@@ -48,7 +48,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 
     int CarFov = 240; /// 240
 
-    int radiusVIEW = 1000;
+    int radiusVIEW = 500;
 
     double FOVCOF = 0.3;
 
@@ -401,9 +401,9 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
             double[] distances = myCar.distancesToWall(mapWalls );
             double[] resul = nModel.curk(distances);
             if( resul[0] > resul[1]){
-                myCar.move(1);
+                myCar.moveAcceleraion(1);
             }else{
-                myCar.move(1);
+                myCar.moveAcceleraion(-1);
             }
 
 
@@ -416,16 +416,16 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 
 
         }else {
-            myCar.move(carMoument);
+            myCar.moveAcceleraion(carMoument);
             myCar.rot(carR);
         }
 
         double[] distances = botCar.distancesToWall(mapWalls );
         double[] resul = nModel.curk(distances);
         if( resul[0] > resul[1]){
-            botCar.move(1);
+            botCar.moveAcceleraion(1);
         }else{
-            botCar.move(1);
+            botCar.moveAcceleraion(-1);
         }
 
 
@@ -554,6 +554,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         if (e.getKeyCode() == KeyEvent.VK_J) {
             nModel.readFromFile("N_" + "1" + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
             System.out.println("NeuroModel open");
+            System.out.println("N_" + "1" + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
 //            setLearn();
             time = 0;
 
