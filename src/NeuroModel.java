@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class NeuroModel {
 
@@ -19,6 +20,15 @@ public class NeuroModel {
     double bOnOutputs[];
 
 
+    double normalize(double x){
+//        double result = 1 / (1 + Math.pow(Math.E, -x));
+
+//        double result = Math.tanh(x);
+//        return result;
+        return x;
+    }
+
+
     NeuroModel(int countOfInpunts, int wightOfModel, int heightOfModel, int countofOutput){
         this.countOfInpunts = countOfInpunts;
         this.wightOfModel = wightOfModel;
@@ -32,7 +42,7 @@ public class NeuroModel {
         bOnNeurons = new double[wightOfModel][heightOfModel];
 
         weightOfOutput = new double[heightOfModel][countofOutput];
-        bOnOutputs = new double[heightOfModel];
+        bOnOutputs = new double[countofOutput];
 
 
     }
@@ -50,7 +60,7 @@ public class NeuroModel {
         bOnNeurons = new double[wightOfModel][heightOfModel];
 
         weightOfOutput = new double[heightOfModel][countofOutput];
-        bOnOutputs = new double[heightOfModel];
+        bOnOutputs = new double[countofOutput];
 
         for(int i = 0; i < weightOfIput.length; i++){
             for(int j = 0; j < weightOfIput[i].length ; j++){
@@ -124,9 +134,44 @@ public class NeuroModel {
         }
 
     }
+    void setZero( int max, int maxB){
+        for(int i = 0; i < weightOfIput.length; i++){
+            for(int j = 0; j < weightOfIput[i].length ; j++){
+                weightOfIput[i][j] = 0;
+            }
+        }
+
+        for(int i = 0; i < weithOfNeurons.length; i++){
+            for(int j = 0; j < weithOfNeurons[i].length ; j++){
+                for(int h = 0; h < weithOfNeurons[i][j].length ; h++){
+                    weithOfNeurons[i][j][h] = 0;
+                }
+            }
+        }
+        for(int i = 0; i < weightOfOutput.length; i++){
+            for(int j = 0; j < weightOfOutput[i].length ; j++){
+                weightOfOutput[i][j] = 0;
+            }
+        }
+
+
+        for(int i = 0;i < bOnInput.length ; i++){
+            bOnInput[i] = 0;
+        }
+
+        for(int i = 0; i < bOnNeurons.length; i++){
+            for(int j = 0; j < bOnNeurons[i].length ; j++){
+                bOnNeurons[i][j] = 0;
+            }
+        }
+        for(int i = 0;i < bOnOutputs.length ; i++){
+            bOnOutputs[i] = 0;
+        }
+
+    }
 
     double[] curk(double inputs[]){
-        double neurons[] = new double[heightOfModel];
+        double neurons[][] = new double[wightOfModel][heightOfModel];
         double ammoun = 0;
         for (int i= 0; i <heightOfModel; i++){
             ammoun = 0;
@@ -134,27 +179,29 @@ public class NeuroModel {
                 ammoun += weightOfIput[j][i] * inputs[i];
             }
             ammoun += bOnNeurons[0][i];
-            neurons[i] = ammoun;
+            neurons[0][i] = normalize(ammoun);
         }
         for(int n = 0; n < wightOfModel -1; n++){
+            double[] secondneurons = new double[heightOfModel];
             for (int i= 0; i <heightOfModel; i++){
                 ammoun = 0;
                 for(int j = 0; j < heightOfModel; j++){
-                    ammoun += weithOfNeurons[n][j][i] * neurons[i];
+                    ammoun += weithOfNeurons[n][j][i] * neurons[n][i];
                 }
                 ammoun += bOnNeurons[n+1][i];
-                neurons[i] = ammoun;
+                neurons[n+1][i] = normalize(ammoun);
             }
 
         }
+
         double result[] = new double[countofOutput];
         for (int i= 0; i <countofOutput; i++){
             ammoun = 0;
             for(int j = 0; j < heightOfModel; j++){
-                ammoun += weightOfIput[j][i] * neurons[i];
+                ammoun += weightOfOutput[j][i] * neurons[wightOfModel-1][j] ;
             }
             ammoun += bOnOutputs[i];
-            result[i] = ammoun;
+            result[i] = normalize(ammoun);
         }
         return result;
     }
@@ -307,7 +354,7 @@ public class NeuroModel {
             return;
         }
 
-        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) {
+        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + ((wightOfModel -1) * heightOfModel * heightOfModel)) {
             int x = (apsoluteI - countOfInpunts * heightOfModel)/ (heightOfModel * heightOfModel);
             int remainder = apsoluteI % (heightOfModel * heightOfModel);
 
@@ -317,8 +364,8 @@ public class NeuroModel {
             weithOfNeurons[x][y][z] = value;
             return;
         }else {
-            int x = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) / heightOfModel;     // номер входу
-            int y = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) % heightOfModel;     // позиція у цьому вході
+            int x = (apsoluteI-  (countOfInpunts * heightOfModel + ((wightOfModel -1) * heightOfModel * heightOfModel))) / countofOutput;     // номер входу
+            int y = (apsoluteI-  (countOfInpunts * heightOfModel + ((wightOfModel -1) * heightOfModel * heightOfModel))) % countofOutput;     // позиція у цьому вході
 
             weightOfOutput[x][y] = value;
 
@@ -326,14 +373,14 @@ public class NeuroModel {
         }
     }
     void setB(int apsoluteI, double value){
-        if (apsoluteI < countOfInpunts){
-            bOnInput[apsoluteI] = value;
+        if (apsoluteI < countofOutput){
+            bOnOutputs[apsoluteI] = value;
             return;
         }
 
-        if (apsoluteI >= countOfInpunts &  apsoluteI <= wightOfModel * heightOfModel) {
-            int x = (apsoluteI - countOfInpunts) / heightOfModel;
-            int y = (apsoluteI - countOfInpunts) % heightOfModel;
+        if (apsoluteI >= countofOutput &  apsoluteI <= wightOfModel * heightOfModel + countofOutput) {
+            int x = (apsoluteI - countofOutput) / heightOfModel;
+            int y = (apsoluteI - countofOutput) % heightOfModel;
 
             bOnNeurons[x][y] = value;
             return;
@@ -350,7 +397,7 @@ public class NeuroModel {
             return;
         }
 
-        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) {
+        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + ((wightOfModel -1) * heightOfModel * heightOfModel)) {
             int x = (apsoluteI - countOfInpunts * heightOfModel)/ (heightOfModel * heightOfModel);
             int remainder = apsoluteI % (heightOfModel * heightOfModel);
 
@@ -360,8 +407,8 @@ public class NeuroModel {
             weithOfNeurons[x][y][z] += value;
             return;
         }else {
-            int x = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) / heightOfModel;     // номер входу
-            int y = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) % heightOfModel;     // позиція у цьому вході
+            int x = (apsoluteI- (countOfInpunts * heightOfModel + ((wightOfModel -1) * heightOfModel * heightOfModel))) / countofOutput;     // номер входу
+            int y = (apsoluteI- (countOfInpunts * heightOfModel + ((wightOfModel -1) * heightOfModel * heightOfModel))) % countofOutput;     // позиція у цьому вході
 
             weightOfOutput[x][y] += value;
 
@@ -374,9 +421,9 @@ public class NeuroModel {
             return;
         }
 
-        if (apsoluteI >= countOfInpunts &  apsoluteI <= wightOfModel * heightOfModel) {
-            int x = (apsoluteI - countOfInpunts) / heightOfModel;
-            int y = (apsoluteI - countOfInpunts) % heightOfModel;
+        if (apsoluteI >= countofOutput &  apsoluteI <= wightOfModel * heightOfModel + countofOutput) {
+            int x = (apsoluteI - countofOutput) / heightOfModel;
+            int y = (apsoluteI - countofOutput) % heightOfModel;
 
             bOnNeurons[x][y] += value;
             return;
@@ -393,7 +440,7 @@ public class NeuroModel {
             return weightOfIput[x][y];
         }
 
-        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) {
+        if (apsoluteI >= countOfInpunts * heightOfModel & apsoluteI < countOfInpunts * heightOfModel + ((wightOfModel-1) * heightOfModel * heightOfModel)) {
             int x = (apsoluteI - countOfInpunts * heightOfModel)/ (heightOfModel * heightOfModel);
             int remainder = apsoluteI % (heightOfModel * heightOfModel);
 
@@ -403,8 +450,8 @@ public class NeuroModel {
 
             return weithOfNeurons[x][y][z];
         }else {
-            int x = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) / heightOfModel;     // номер входу
-            int y = (apsoluteI-countOfInpunts * heightOfModel + (wightOfModel * heightOfModel * heightOfModel)) % heightOfModel;     // позиція у цьому вході
+            int x = (apsoluteI-(countOfInpunts * heightOfModel + ((wightOfModel-1) * heightOfModel * heightOfModel))) / countofOutput;     // номер входу
+            int y = (apsoluteI-(countOfInpunts * heightOfModel + ((wightOfModel-1) * heightOfModel * heightOfModel))) % countofOutput;     // позиція у цьому вході
 
 
             return weightOfOutput[x][y];
@@ -416,9 +463,9 @@ public class NeuroModel {
             return bOnOutputs[apsoluteI];
         }
 
-        if (apsoluteI >= countOfInpunts &  apsoluteI <= wightOfModel * heightOfModel) {
-            int x = (apsoluteI - countOfInpunts) / heightOfModel;
-            int y = (apsoluteI - countOfInpunts) % heightOfModel;
+        if (apsoluteI >= countofOutput &  apsoluteI <= wightOfModel * heightOfModel + countofOutput) {
+            int x = (apsoluteI - countofOutput) / heightOfModel;
+            int y = (apsoluteI - countofOutput) % heightOfModel;
 
             return bOnNeurons[x][y];
 
@@ -428,4 +475,24 @@ public class NeuroModel {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NeuroModel that = (NeuroModel) o;
+
+        return countOfInpunts == that.countOfInpunts &&
+                wightOfModel == that.wightOfModel &&
+                heightOfModel == that.heightOfModel &&
+                countofOutput == that.countofOutput &&
+                Arrays.deepEquals(weightOfIput, that.weightOfIput) &&
+                Arrays.equals(bOnInput, that.bOnInput) &&
+                Arrays.deepEquals(weithOfNeurons, that.weithOfNeurons) &&
+                Arrays.deepEquals(bOnNeurons, that.bOnNeurons) &&
+                Arrays.deepEquals(weightOfOutput, that.weightOfOutput) &&
+                Arrays.equals(bOnOutputs, that.bOnOutputs);
+    }
 }
+
+

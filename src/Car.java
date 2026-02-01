@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.lang.management.GarbageCollectorMXBean;
+import java.util.ArrayList;
 
 public class Car extends Square{
     double speed = 5;
@@ -71,5 +72,92 @@ public class Car extends Square{
 //        for (Line2d l: rays){
 //            l.render(g, cam);
 //        }
+    }
+
+    boolean isColisionWith(ArrayList<Line2d> mapwalls){
+
+
+        for(Line2d carline: this.lines){
+            for(Line2d mapline: mapwalls){
+                Vector2 colP = carline.colision(mapline);
+                if(colP != null){
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    double[] distancesToWall(ArrayList<Line2d> mapWalls){
+        double[] result = new double[countOfRays];
+
+        for(int i = 0 ; i < countOfRays; i++){
+            double mindis = 1;
+
+//            for(int j = 0; j < mapWalls.size(); j++){
+            for(Line2d mapLine: mapWalls){
+                Vector2 colP= rays[i].colision(mapLine);
+                double rayDis = 1; //// 0 -1
+
+                if(colP != null) {
+                    rayDis = colP.subR(this.position).length() / radiusView; ////  0 - 1
+                    if (rayDis < mindis) {
+                        mindis = rayDis;
+
+
+                    }
+
+                }
+
+            }
+            result[i] = mindis;
+        }
+        return result;
+
+    }
+    double[] distancesToWallRenderRay(ArrayList<Line2d> mapWalls, Graphics g, Camera cam){
+        double[] result = new double[countOfRays];
+
+        for(int i = 0 ; i < countOfRays; i++){
+            double mindis = 1;
+            Vector2 minPoint = null;
+
+//            for(int j = 0; j < mapWalls.size(); j++){
+            for(Line2d mapLine: mapWalls){
+                Vector2 colP= rays[i].colision(mapLine);
+                double rayDis = 1;
+
+
+                if(colP != null) {
+                    rayDis = colP.subR(this.position).length() / radiusView; ////  0 - 1
+                    if (rayDis < mindis) {
+                        mindis = rayDis;
+                        minPoint = colP;
+
+                    }
+
+                }
+            }
+            result[i] = mindis;
+            Line2d renderRay ;
+            g.setColor(Color.RED);
+            if(minPoint != null) {
+                renderRay = new Line2d(this.position, minPoint);
+                g.setColor(Color.RED);
+                minPoint.drawPoint(6, g, cam);
+                g.setColor(Color.BLUE);
+            }else {
+                renderRay = new Line2d(this.position, this.rays[i].p2);
+                g.setColor(Color.RED);
+                this.rays[i].p2.drawPoint(6, g, cam);
+                g.setColor(Color.BLUE);
+            }
+            g.setColor(Color.BLUE);
+            renderRay.render(g,cam);
+
+        }
+        return result;
+
     }
 }

@@ -1,3 +1,5 @@
+import java.awt.*;
+
 public class Vector2 {
     double x,y;
 
@@ -61,6 +63,10 @@ public class Vector2 {
 
         this.x = x / length;
         this.y = y / length;
+    }
+
+    void drawPoint(int radius , Graphics g , Camera cam){
+        g.fillRect((int) (x- cam.position.x- radius/2), (int) (y- cam.position.y  - radius/2),  radius,radius);
     }
 
 }
