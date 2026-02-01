@@ -374,17 +374,26 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         if(myCar.isColisionWith(mapWalls)){
             myCar.position = new Vector2(map.startStop.p1);
             myCar.rotation=0;
+            botCar.position = new Vector2(map.startStop.p1);
+            botCar.rotation=0;
         }
+        if(botCar.isColisionWith(mapWalls)){
+            botCar.position = new Vector2(map.startStop.p1);
+            botCar.rotation=0;
+        }
+
         if(ISRENDERRAY) {
-            double[] distances = myCar.distancesToWallRenderRay(mapWalls , g ,cam);
+            double[] distances = botCar.distancesToWallRenderRay(mapWalls , g ,cam);
             g.setColor(Color.WHITE);
             g.fillRect(0 ,0 ,WINDOWHEINGH, 400);
             g.setColor(Color.BLUE);
-            for (int i = 0; i < myCar.rays.length; i++) {
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 -250, (int) ( WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distances[i]) *200));
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3- 250, (int) ( WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distances[i]) * 200));
+            for (int i = 0; i < botCar.rays.length; i++) {
+                g.fillRect((int) (i * WINDOWHEINGH / botCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 -250, (int) ( WINDOWHEINGH / botCar.countOfRays *FOVCOF), (int) -((1 -distances[i]) *200));
+                g.fillRect((int) (i * WINDOWHEINGH / botCar.countOfRays*FOVCOF), WINDOWHEINGH / 3- 250, (int) ( WINDOWHEINGH / botCar.countOfRays* FOVCOF), (int) ((1- distances[i]) * 200));
             }
         }
+
+
 
         if(ISRENDERMAP) map.render(g, cam);
 
@@ -410,12 +419,31 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
             myCar.move(carMoument);
             myCar.rot(carR);
         }
+
+        double[] distances = botCar.distancesToWall(mapWalls );
+        double[] resul = nModel.curk(distances);
+        if( resul[0] > resul[1]){
+            botCar.move(1);
+        }else{
+            botCar.move(1);
+        }
+
+
+        if( resul[2] > resul[3]){
+            botCar.rot(1);
+        }else{
+            botCar.rot(-1);
+        }
+
+
         myCar.curc();
+        botCar.curc();
 
         if(CAMERAMODE == 1)
         cam.position = myCar.position.subR(centerOfSCreen);
 
         myCar.render(g, cam);
+        botCar.render(g,cam);
 
 
 
@@ -429,6 +457,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
             carMoument = 0;
             carR = 0;
         }
+
 
     }
 

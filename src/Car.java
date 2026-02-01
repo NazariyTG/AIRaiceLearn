@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Car extends Square{
     double speed = 5;
+    double maxSpeed = 10;
+    double acceleration = 0.2;
     double rotationSpeed= 2;
 
     Line2d rays[];
@@ -54,6 +56,36 @@ public class Car extends Square{
 
 
     }
+    void moveAcceleraion(double m){ // -1 <= m <= 1
+        if( m >= 1) m =1 ;
+        if( m <= -1) m = -1;
+
+        speed += acceleration * m;
+
+        if(speed > maxSpeed){
+            speed = maxSpeed;
+        }
+        if(speed < -maxSpeed){
+            speed = -maxSpeed;
+        }
+
+
+
+        this.position.x += (speed ) * Math.cos(Math.toRadians(this.rotation));
+        this.position.y += (speed) * Math.sin(Math.toRadians(this.rotation));
+        for(Line2d l: rays){
+            l.position = this.position;
+            Line2d ray = new Line2d(position,new  Vector2( position.x + radiusView,position.y));
+            ray.rotate(-fov/2);
+            for(int i = 0; i < rays.length; i++){
+                rays[i] = ray.rotateR(fov/countOfRays * i);
+
+            }
+        }
+
+    }
+
+
     void rot(double r){ // -1 <= m <= 1
         if( r >= 1) r =1 ;
         if( r <= -1) r = -1;

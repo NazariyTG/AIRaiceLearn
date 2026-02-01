@@ -392,9 +392,9 @@ public class MainCarControl extends JPanel implements MouseListener{
             double[] distances = myCar.distancesToWall(mapWalls );
             double[] resul = nModel.curk(distances);
             if( resul[0] > resul[1]){
-                myCar.move(1);
+                myCar.moveAcceleraion(1);
             }else{
-                myCar.move(1);
+                myCar.moveAcceleraion(1);
             }
 
 
@@ -407,7 +407,7 @@ public class MainCarControl extends JPanel implements MouseListener{
 
 
         }else {
-            myCar.move(carMoument);
+            myCar.moveAcceleraion(carMoument);
             myCar.rot(carR);
         }
         myCar.curc();
@@ -429,6 +429,7 @@ public class MainCarControl extends JPanel implements MouseListener{
             carMoument = 0;
             carR = 0;
         }
+
 
     }
 
