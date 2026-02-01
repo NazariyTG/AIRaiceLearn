@@ -43,6 +43,12 @@ public class Map {
                 activePointWall3 = true;
             }
         }
+        else if (activeWall == 4) {
+
+                startStop.p2 = p.addR(cam.position);
+
+
+        }
 
     }
 

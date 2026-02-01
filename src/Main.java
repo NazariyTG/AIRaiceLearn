@@ -9,12 +9,12 @@ public class Main extends JPanel implements MouseListener{
     static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
-    static int MAXTIMEFORGENERATION = 2200;
+    static int MAXTIMEFORGENERATION = 2000;
 
     //learn
     int timeValue = 2;
-    int distanceVelue = 3;
-    int colisionValue = 2000;
+    int distanceVelue = 5;
+    int colisionValue = 1000;
 
     final static int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
 
@@ -52,7 +52,7 @@ public class Main extends JPanel implements MouseListener{
 
     int CountOfOutput = 4;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,3,8,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,8,CountOfOutput);
 
     double bestResult = Double.MAX_VALUE;
     int coutSameNeurons;
@@ -361,6 +361,9 @@ public class Main extends JPanel implements MouseListener{
             learn(resultsWeight,resultsNeuron);
 
         }
+        if(MAXTIMEFORGENERATION - time < 100){
+            System.out.println("last time: " + (MAXTIMEFORGENERATION - time));
+        }
 
 
 
@@ -410,9 +413,9 @@ public class Main extends JPanel implements MouseListener{
 //                    double[] vecMove = {Math.random() , Math.random() * 2 -1};
 
                     if( vecMove[0] > vecMove[1]){
-                        car1.move(1);
+                        car1.moveAcceleraion(1);
                     }else{
-                        car1.move(1);
+                        car1.moveAcceleraion(-1);
                     }
 
 
@@ -477,11 +480,14 @@ public class Main extends JPanel implements MouseListener{
                 if(isCarAliveNeurons[w][i]) {
                     double[] vecMove = neuroModelsNeuronsLearn[w][i].curk(distances);
 //                    double[] vecMove = {Math.random() , Math.random() * 2 -1};
+//                    car1.move(vecMove[0]);
+//                    car1.rot(vecMove[1]);
+//                    double[] vecMove = {Math.random() , Math.random() * 2 -1};
 
                     if( vecMove[0] > vecMove[1]){
-                        car1.move(1);
+                        car1.moveAcceleraion(1);
                     }else{
-                        car1.move(1);
+                        car1.moveAcceleraion(1);
                     }
 
 
@@ -490,11 +496,6 @@ public class Main extends JPanel implements MouseListener{
                     }else{
                         car1.rot(-1);
                     }
-
-
-
-//                    car1.move(vecMove[0]);
-//                    car1.rot(vecMove[1]);
                     car1.curc();
                 }
                 carsNeurons[w][i] = car1;
@@ -817,6 +818,11 @@ public class Main extends JPanel implements MouseListener{
 
             System.out.println("Map Editing : Wall_3");
         }
+            if (e.getKeyCode() == KeyEvent.VK_4) {
+                if (isMapEditinEctive) activeWall = 4;
+
+                System.out.println("Map Editing : Wall_4");
+            }
             }
         });
         }

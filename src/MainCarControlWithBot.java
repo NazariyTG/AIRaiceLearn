@@ -43,7 +43,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 
     int CountOfOutput = 4;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,3,8,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,8,CountOfOutput);
 
 
     int CarFov = 240; /// 240
