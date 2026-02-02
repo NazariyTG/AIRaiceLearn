@@ -43,14 +43,17 @@ public class MainCarControl extends JPanel implements MouseListener{
 
     int CountOfOutput = 4;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,8,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,10,CountOfOutput);
 
 
     int CarFov = 240; /// 240
 
-    int radiusVIEW = 500;
+    int radiusVIEW = 700;
 
-    double FOVCOF = 0.3;
+    int mapIndex = 0;
+
+    double FOVCOF = 0.7;
+
 
     boolean isRenderMap = true;
 
@@ -170,9 +173,6 @@ public class MainCarControl extends JPanel implements MouseListener{
 
 
         }
-
-
-
 
     }
 
@@ -376,7 +376,11 @@ public class MainCarControl extends JPanel implements MouseListener{
             myCar.rotation=0;
         }
         if(ISRENDERRAY) {
-            double[] distances = myCar.distancesToWallRenderRay(mapWalls , g ,cam);
+            double[] distances;
+            if(ISRENDERMAP)
+            distances = myCar.distancesToWallRenderRay(mapWalls , g ,cam);
+            else distances = myCar.distancesToWall(mapWalls);
+
             g.setColor(Color.WHITE);
             g.fillRect(0 ,0 ,WINDOWHEINGH, 400);
             g.setColor(Color.BLUE);
@@ -434,7 +438,7 @@ public class MainCarControl extends JPanel implements MouseListener{
     }
 
     public MainCarControl() {
-        map.readFromFile("map.txt");
+        map.readFromFile("map" +mapIndex+ ".txt");
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
         myCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
@@ -516,7 +520,7 @@ public class MainCarControl extends JPanel implements MouseListener{
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_O) {
-            map.readFromFile("map.txt");
+            map.readFromFile("map" +mapIndex+ ".txt");
             System.out.println("Map open");
         }
         if (e.getKeyCode() == KeyEvent.VK_K) {

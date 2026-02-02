@@ -3,9 +3,9 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.util.ArrayList;
 
 public class Car extends Square{
-    double speed = 5;
-    double maxSpeed = 30;
-    double acceleration = 0.2;
+    double speed = 2;
+    double maxSpeed = 10;
+    double acceleration = 0.4;
     double rotationSpeed= 2;
 
     Line2d rays[];

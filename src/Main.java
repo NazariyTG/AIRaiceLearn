@@ -9,17 +9,17 @@ public class Main extends JPanel implements MouseListener{
     static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
-    static int MAXTIMEFORGENERATION = 1000;
+    static int MAXTIMEFORGENERATION = 500;
 
     //learn
     int timeValue = 2;
     int distanceVelue = 5;
     int colisionValue = 1000;
 
-    final static int LEARNTYPECOUNT = 5;  // neparni ///////////////////////////
+    final static int LEARNTYPECOUNT = 7;  // neparni ///////////////////////////
 
 //        double myltipliers[] = {2, 0.2 , 0.02, 0.002, 0.0002,0.00002, 20, 200,2000, };
-    double myltipliers[] = {2, 0.2 , 0.02,  0.002,20 };
+    double myltipliers[] = {2, 0.2 , 0.02,  0.002,0.00002,20 };
     //    double myltipliers[] = { 0.02, 0.002, 0.0002, 0.000002,0.00000002,0.000000002};
 //        double myltipliers[] = {  0.00000002,0.000000002};
 //    double myltipliers[] = {0.2 ,2};
@@ -36,7 +36,12 @@ public class Main extends JPanel implements MouseListener{
     boolean isControlCar = false;
 
     int COUNTOFRAYS = 10;
-    int COUNTOFCAR = 10;
+
+    int CarFov = 240; /// 240
+
+    int radiusVIEW = 700;
+
+    int mapIndex = 0;
 
 
     boolean isRenderMap = true;
@@ -53,7 +58,7 @@ public class Main extends JPanel implements MouseListener{
 
     int CountOfOutput = 4;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,8,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,10,CountOfOutput);
 
     double bestResult = Double.MAX_VALUE;
     int coutSameNeurons;
@@ -93,7 +98,7 @@ public class Main extends JPanel implements MouseListener{
 
     int countOfAllWeght;
     int countOfALLNeurons;
-    int[] currentWeightInProgress = new int[COUNTOFCAR];
+
 
     int currentGeneration = 0;
 
@@ -132,12 +137,12 @@ public class Main extends JPanel implements MouseListener{
 
         for(int w = 0; w < countOfAllWeght; w++) {
             for (int i = 0; i < LEARNTYPECOUNT; i++) {
-                carsWeights[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, 500, 240);
+                carsWeights[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
             }
         }
         for(int w = 0; w < countOfALLNeurons; w++) {
             for (int i = 0; i < LEARNTYPECOUNT; i++) {
-                carsNeurons[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, 500, 240);
+                carsNeurons[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
             }
         }
 
@@ -642,11 +647,13 @@ public class Main extends JPanel implements MouseListener{
     }
 
     public Main() {
-        map.readFromFile("map.txt");
+        map.readFromFile("map" +mapIndex+ ".txt");
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
 
-        new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, 500, 240);
+
+
+        new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
 
         countOfAllWeght = nModel.countOfInpunts * nModel.heightOfModel + (nModel.wightOfModel - 1) * nModel.heightOfModel * nModel.heightOfModel + nModel.heightOfModel * nModel.countofOutput;
         countOfALLNeurons = nModel.wightOfModel * nModel.heightOfModel + nModel.countofOutput;
@@ -731,8 +738,8 @@ public class Main extends JPanel implements MouseListener{
             public void keyPressed(KeyEvent e) {
         // S — зберегти
         if (e.getKeyCode() == KeyEvent.VK_I) {
-            map.safeToFile("map.txt");
-            System.out.println("Map saved");
+            map.safeToFile("map" +mapIndex+ ".txt");
+            System.out.println("Map saved " + " map" +mapIndex+ " .txt");
         }
         if (e.getKeyCode() == KeyEvent.VK_E) {
             if(isMapEditinEctive){
@@ -744,7 +751,7 @@ public class Main extends JPanel implements MouseListener{
             }
         }
         if (e.getKeyCode() == KeyEvent.VK_O) {
-            map.readFromFile("map.txt");
+            map.readFromFile("map" +mapIndex+ ".txt");
             System.out.println("Map open");
         }
         if (e.getKeyCode() == KeyEvent.VK_K) {
