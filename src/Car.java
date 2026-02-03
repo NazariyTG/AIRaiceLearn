@@ -192,4 +192,134 @@ public class Car extends Square{
         return result;
 
     }
+
+    double curkCarResult(Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
+
+        this.position = map.startStop.p1;
+        this.rotation = 0;
+
+        this.speed = 0;
+
+        this.curc();
+
+        ArrayList<Line2d> allMapWalls = new ArrayList<>();
+        allMapWalls.addAll(map.wall1);
+        allMapWalls.addAll(map.wall2);
+
+        boolean isCarActive = true;
+
+        int timer = 0;
+
+        while (true){
+
+            double[] distances = this.distancesToWall(allMapWalls );
+            double[] resul = n.curk(distances);
+
+            if( resul[0] > resul[1]){
+                this.moveAcceleraion(1);
+            }else{
+                this.moveAcceleraion(-1);
+            }
+
+
+            if( resul[2] > resul[3] && resul[2] > resul[4]){
+                this.rot(1);
+            }
+            if( resul[3] > resul[2] && resul[3] > resul[4]){
+                this.rot(-1);
+            }if(resul[4] > resul[2] && resul[4] > resul[3]){
+                this.rot(0);
+            }
+
+            this.curc();
+
+
+            double ltowin = this.position.subR(map.startStop.p2).length();
+            if(ltowin < distanceTowin){
+//                System.out.println(this.position.x + " " + this.position.y);
+                return timer * timeValue;
+
+
+            }
+
+            if(this.isColisionWith(allMapWalls)){
+                System.out.println(this.position.x + " " + this.position.y + "colision " );
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+            }
+            timer++;
+            if(timer > maxTime){
+                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+
+            }
+
+        }
+
+    }
+
+    double curkCarResultRender(Graphics g, Camera cam, Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
+
+        this.position = map.startStop.p1;
+        this.rotation = 0;
+
+        this.speed = 0;
+
+        this.curc();
+
+        ArrayList<Line2d> allMapWalls = new ArrayList<>();
+        allMapWalls.addAll(map.wall1);
+        allMapWalls.addAll(map.wall2);
+
+        boolean isCarActive = true;
+
+        int timer = 0;
+
+        while (true){
+
+            double[] distances = this.distancesToWall(allMapWalls );
+            double[] resul = n.curk(distances);
+
+            if( resul[0] > resul[1]){
+                this.moveAcceleraion(1);
+            }else{
+                this.moveAcceleraion(-1);
+            }
+
+
+            if( resul[2] > resul[3] && resul[2] > resul[4]){
+                this.rot(1);
+            }
+            if( resul[3] > resul[2] && resul[3] > resul[4]){
+                this.rot(-1);
+            }if(resul[4] > resul[2] && resul[4] > resul[3]){
+                this.rot(0);
+            }
+
+            this.curc();
+
+            this.render(g, cam);
+
+
+            double ltowin = this.position.subR(map.startStop.p2).length();
+            if(ltowin < distanceTowin){
+//                System.out.println(this.position.x + " " + this.position.y);
+                return timer * timeValue;
+
+
+            }
+
+            if(this.isColisionWith(allMapWalls)){
+                System.out.println(this.position.x + " " + this.position.y + "colision " );
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+            }
+            timer++;
+            if(timer > maxTime){
+                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+
+            }
+
+        }
+
+    }
 }

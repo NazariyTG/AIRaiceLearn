@@ -327,6 +327,8 @@ public class Main extends JPanel implements MouseListener{
     }
 
 
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

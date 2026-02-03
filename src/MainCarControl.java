@@ -41,16 +41,16 @@ public class MainCarControl extends JPanel implements MouseListener{
     int NOFMODEL = 1;
     int COUNTOFRAYS = 10;
 
-    int CountOfOutput = 4;
+    int CountOfOutput = 5;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,10,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,5,CountOfOutput);
 
 
     int CarFov = 240; /// 240
 
     int radiusVIEW = 700;
 
-    int mapIndex = 0;
+    int mapIndex = 4;
 
     double FOVCOF = 0.7;
 
@@ -402,10 +402,13 @@ public class MainCarControl extends JPanel implements MouseListener{
             }
 
 
-            if( resul[2] > resul[3]){
+            if( resul[2] > resul[3] && resul[2] > resul[4]){
                 myCar.rot(1);
-            }else{
+            }
+            if( resul[3] > resul[2] && resul[3] > resul[4]){
                 myCar.rot(-1);
+            }if(resul[4] > resul[2] && resul[4] > resul[3]){
+                myCar.rot(0);
             }
 
 
@@ -418,10 +421,11 @@ public class MainCarControl extends JPanel implements MouseListener{
 
         if(CAMERAMODE == 1)
         cam.position = myCar.position.subR(centerOfSCreen);
+        System.out.println(myCar.position.x + " " + myCar.position.y + "max TIme") ;
 
         myCar.render(g, cam);
 
-
+        myCar.curkCarResultRender(g, cam, map, nModel,100,700,timeValue,distanceVelue,colisionValue);
 
 
 
