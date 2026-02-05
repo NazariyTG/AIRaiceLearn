@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Car extends Square{
     double speed = 2;
-    double maxSpeed = 10;
+    double maxSpeed = 30;
     double acceleration = 0.4;
     double rotationSpeed= 2;
 
@@ -195,7 +195,7 @@ public class Car extends Square{
 
     double curkCarResult(Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
 
-        this.position = map.startStop.p1;
+        this.position = new Vector2(map.startStop.p1);
         this.rotation = 0;
 
         this.speed = 0;
@@ -236,6 +236,8 @@ public class Car extends Square{
 
             double ltowin = this.position.subR(map.startStop.p2).length();
             if(ltowin < distanceTowin){
+                System.out.println("winner");
+
 //                System.out.println(this.position.x + " " + this.position.y);
                 return timer * timeValue;
 
@@ -243,12 +245,12 @@ public class Car extends Square{
             }
 
             if(this.isColisionWith(allMapWalls)){
-                System.out.println(this.position.x + " " + this.position.y + "colision " );
+//                System.out.println(this.position.x + " " + this.position.y + "colision " );
                 return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
             }
             timer++;
             if(timer > maxTime){
-                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
+//                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
                 return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
 
             }
@@ -259,7 +261,7 @@ public class Car extends Square{
 
     double curkCarResultRender(Graphics g, Camera cam, Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
 
-        this.position = map.startStop.p1;
+        this.position = new Vector2(map.startStop.p1);
         this.rotation = 0;
 
         this.speed = 0;
@@ -276,7 +278,14 @@ public class Car extends Square{
 
         while (true){
 
+            double[] inputs = new double[this.countOfRays + 1];
             double[] distances = this.distancesToWall(allMapWalls );
+            for(int i = 0; i < distances.length; i++){
+                inputs[i] = distances[i];
+            }
+            inputs [distances.length] = this.speed;
+
+
             double[] resul = n.curk(distances);
 
             if( resul[0] > resul[1]){
@@ -302,7 +311,7 @@ public class Car extends Square{
 
             double ltowin = this.position.subR(map.startStop.p2).length();
             if(ltowin < distanceTowin){
-//                System.out.println(this.position.x + " " + this.position.y);
+                System.out.println("winner");
                 return timer * timeValue;
 
 

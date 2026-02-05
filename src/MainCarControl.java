@@ -10,6 +10,8 @@ public class MainCarControl extends JPanel implements MouseListener{
     int CAMERAMODE = 1; /// 1 -> on car
     static int MAXTIMEFORGENERATION = 700;
 
+    int distanceTOwin = 100;
+
     //learn
     int timeValue = 2;
     int distanceVelue = 10;
@@ -18,7 +20,7 @@ public class MainCarControl extends JPanel implements MouseListener{
     final static int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
 
 //        double myltipliers[] = {2, 0.2 , 0.02, 0.002, 0.0002,0.00002, 20, 200,2000, };
-    double myltipliers[] = {2, 0.2 , 0.02,  0.002,20 };
+    double myltipliers[] = {2, 0.2 , 0.02,   };
     //    double myltipliers[] = { 0.02, 0.002, 0.0002, 0.000002,0.00000002,0.000000002};
 //    double myltipliers[] = {0.2 ,2};
     int curentMultp = 0;
@@ -39,11 +41,12 @@ public class MainCarControl extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
 
     int NOFMODEL = 1;
-    int COUNTOFRAYS = 10;
+//    int COUNTOFRAYS = 10;
+    int countOfInput = 11;
 
     int CountOfOutput = 5;
 
-    NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,5,CountOfOutput);
+    NeuroModel nModel = new NeuroModel(countOfInput,3,11,CountOfOutput);
 
 
     int CarFov = 240; /// 240
@@ -152,12 +155,12 @@ public class MainCarControl extends JPanel implements MouseListener{
 
         for(int w = 0; w < countOfAllWeght; w++) {
             for (int i = 0; i < LEARNTYPECOUNT; i++) {
-                carsWeights[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
+                carsWeights[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
             }
         }
         for(int w = 0; w < countOfALLNeurons; w++) {
             for (int i = 0; i < LEARNTYPECOUNT; i++) {
-                carsNeurons[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
+                carsNeurons[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput - 1, radiusVIEW, CarFov);
             }
         }
 
@@ -382,11 +385,11 @@ public class MainCarControl extends JPanel implements MouseListener{
             else distances = myCar.distancesToWall(mapWalls);
 
             g.setColor(Color.WHITE);
-            g.fillRect(0 ,0 ,WINDOWHEINGH, 400);
+            g.fillRect(0 ,0 ,WINDOWHEINGH, 300);
             g.setColor(Color.BLUE);
             for (int i = 0; i < myCar.rays.length; i++) {
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 -250, (int) ( WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distances[i]) *200));
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3- 250, (int) ( WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distances[i]) * 200));
+                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 -380, (int) ( WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distances[i]) *150));
+                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3- 380, (int) ( WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distances[i]) * 150));
             }
         }
 
@@ -421,11 +424,17 @@ public class MainCarControl extends JPanel implements MouseListener{
 
         if(CAMERAMODE == 1)
         cam.position = myCar.position.subR(centerOfSCreen);
-        System.out.println(myCar.position.x + " " + myCar.position.y + "max TIme") ;
+
 
         myCar.render(g, cam);
+        Car car = new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, 240);
 
-        myCar.curkCarResultRender(g, cam, map, nModel,100,700,timeValue,distanceVelue,colisionValue);
+//        System.out.println(car.curkCarResultRender(g, cam, map, nModel,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue));
+//        System.out.println("speed " + myCar.speed);
+        Font oldFont = g.getFont();
+
+        g.setFont(oldFont.deriveFont(30f));
+        g.drawString("speed: " +(int) myCar.speed, 60, WINDOWWITH - 60);
 
 
 
@@ -445,8 +454,8 @@ public class MainCarControl extends JPanel implements MouseListener{
         map.readFromFile("map" +mapIndex+ ".txt");
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
-        myCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
-        botCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, CarFov);
+        myCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
+        botCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
 
 
         countOfAllWeght = nModel.countOfInpunts * nModel.heightOfModel + (nModel.wightOfModel - 1) * nModel.heightOfModel * nModel.heightOfModel + nModel.heightOfModel * nModel.countofOutput;
@@ -623,6 +632,8 @@ public class MainCarControl extends JPanel implements MouseListener{
         frame.setSize(WINDOWHEINGH, WINDOWWITH);
         frame.add(new MainCarControl());
         frame.setVisible(true);
+
+
 
     }
 
