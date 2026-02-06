@@ -40,7 +40,7 @@ public class MainCarControl extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithRay = new Vector2 (WINDOWHEINGH /2, WINDOWWITH/2 + WINDOWHEINGH/8);
     Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
 
-    int NOFMODEL = 1;
+    int NOFMODEL = 2;
 //    int COUNTOFRAYS = 10;
     int countOfInput = 11;
 
@@ -396,8 +396,13 @@ public class MainCarControl extends JPanel implements MouseListener{
         if(ISRENDERMAP) map.render(g, cam);
 
         if(ISCARNEURONS){
+            double[] inputs = new double[myCar.countOfRays + 1];
             double[] distances = myCar.distancesToWall(mapWalls );
-            double[] resul = nModel.curk(distances);
+            for(int i = 0; i < distances.length; i++){
+                inputs[i] = distances[i];
+            }
+            inputs [distances.length] = myCar.speed/ myCar.maxSpeed;
+            double[] resul = nModel.curk(inputs);
             if( resul[0] > resul[1]){
                 myCar.moveAcceleraion(1);
             }else{

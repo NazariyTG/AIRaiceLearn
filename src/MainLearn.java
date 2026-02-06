@@ -11,23 +11,23 @@ public class MainLearn {
         int maxTimeGeneration = 2500;
 
         //learn
-        int timeValue = 1;
+        int timeValue = 5;
         int distanceVelue = 5;
-        int colisionValue = 200;
+        int colisionValue = 30000;
 
-        int LEARNTYPECOUNT = 7;  // neparni ///////////////////////////
+        int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
 
 //        double myltipliers[] = {2, 0.2 , 0.02 };
-        double myltipliers[] = {2, 0.2 , 0.02,  0.002 };
+        double myltipliers[] = {2, 0.2 , 0.02 ,20};
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
 //    double myltipliers[] = {0.000002,0.2 ,2,20, 0.02 , 0.0002};
 
 
         //neuro
-        int NOFMODEL = 1;
-        int countOfInput = 21;
-        int wightModel = 4;
-        int heightOfModel = 15;
+        int NOFMODEL = 2;
+        int countOfInput = 11;
+        int wightModel = 3;
+        int heightOfModel = 11;
 
         int CountOfOutput = 5;
 

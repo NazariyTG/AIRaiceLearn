@@ -1,3 +1,4 @@
+import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -63,8 +64,13 @@ public class Main extends JPanel implements MouseListener{
     double bestResult = Double.MAX_VALUE;
     int coutSameNeurons;
 
+    int[] mapsIndexes = {11,12,13,14};
+
+    Map[] maps = new Map[mapsIndexes.length];
+
     Map map = new Map();
     ArrayList<Line2d> mapWalls = new ArrayList<>();
+
     Vector2 mouse = new Vector2();
     Vector2 mouseDelta = new Vector2();
 
@@ -106,6 +112,15 @@ public class Main extends JPanel implements MouseListener{
 
     double deltaLearn = 1;
 // Vector2[] carsResults
+
+    void changeMap(int indexMap){
+        map = maps[indexMap];
+
+        mapWalls.clear();
+        mapWalls.addAll(map.wall1);
+        mapWalls.addAll(map.wall2);
+
+    }
 
     void updateLearn(){
         for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
@@ -639,17 +654,16 @@ public class Main extends JPanel implements MouseListener{
             time = 0;
         }
 
-
         if(!isOneAlive) time = 0;
-
-
-
-
-
     }
 
     public Main() {
         map.readFromFile("map" +mapIndex+ ".txt");
+        for(int i = 0; i < mapsIndexes.length; i++){
+            maps[i].readFromFile("map" +mapsIndexes[i]+ ".txt");
+        }
+
+
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
 

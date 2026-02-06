@@ -212,8 +212,13 @@ public class Car extends Square{
 
         while (true){
 
+            double[] inputs = new double[this.countOfRays + 1];
             double[] distances = this.distancesToWall(allMapWalls );
-            double[] resul = n.curk(distances);
+            for(int i = 0; i < distances.length; i++){
+                inputs[i] = distances[i];
+            }
+            inputs [distances.length] = this.speed/ this.maxSpeed;
+            double[] resul = n.curk(inputs);
 
             if( resul[0] > resul[1]){
                 this.moveAcceleraion(1);
@@ -283,7 +288,7 @@ public class Car extends Square{
             for(int i = 0; i < distances.length; i++){
                 inputs[i] = distances[i];
             }
-            inputs [distances.length] = this.speed;
+            inputs [distances.length] = this.speed/ this.maxSpeed;
 
 
             double[] resul = n.curk(distances);
