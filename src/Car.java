@@ -1,12 +1,13 @@
 import java.awt.*;
 import java.lang.management.GarbageCollectorMXBean;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Car extends Square{
     double speed = 2;
     double maxSpeed = 30;
     double acceleration = 0.4;
-    double rotationSpeed= 2;
+    double rotationSpeed= 2;//2
 
     Line2d rays[];
 
@@ -28,7 +29,22 @@ public class Car extends Square{
 
 
         }
+    }Car(Car other){
+        super (other.position, other.rotation, other.wigth,other.heingt);
+        rays = new Line2d[other.countOfRays];
+        this.countOfRays = other.countOfRays;
+        this.radiusView = other.radiusView;
+        this.fov = other.fov;
+
+        Line2d ray = new Line2d(position,new  Vector2( position.x + radiusView,position.y));
+        ray.rotate(-fov/2);
+        for(int i = 0; i < rays.length; i++){
+            rays[i] = ray.rotateR(fov/countOfRays * i);
+
+
+        }
     }
+
 
     void move(double m){ // -1 <= m <= 1
         if( m >= 1) m =1 ;
@@ -90,7 +106,7 @@ public class Car extends Square{
         if( r >= 1) r =1 ;
         if( r <= -1) r = -1;
 
-        double deltaRotation = rotationSpeed *r;
+        double deltaRotation = rotationSpeed * r;
         this.rotation += deltaRotation;
 
         for (Line2d l: rays){
@@ -195,12 +211,12 @@ public class Car extends Square{
 
     double curkCarResult(Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
 
-        this.position = new Vector2(map.startStop.p1);
-        this.rotation = 0;
-
-        this.speed = 0;
-
-        this.curc();
+//        this.position = new Vector2(map.startStop.p1);
+//        this.rotation = 0;
+//
+//        this.speed = 0;
+//
+//        this.curc();
 
         ArrayList<Line2d> allMapWalls = new ArrayList<>();
         allMapWalls.addAll(map.wall1);
@@ -212,8 +228,29 @@ public class Car extends Square{
 
         while (true){
 
+            double ltowin = this.position.subR(map.startStop.p2).length();
+            if(ltowin < distanceTowin){
+                System.out.println("winner");
+
+//                System.out.println(this.position.x + " " + this.position.y);
+                return timer * timeValue;
+
+
+            }
+
+            if(this.isColisionWith(allMapWalls)){
+//                System.out.println(this.position.x + " " + this.position.y + "colision " );
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+            }
+            timer++;
+            if(timer > maxTime){
+//                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+
+            }
+
             double[] inputs = new double[this.countOfRays + 1];
-            double[] distances = this.distancesToWall(allMapWalls );
+            double[] distances = this.distancesToWall(allMapWalls);
             for(int i = 0; i < distances.length; i++){
                 inputs[i] = distances[i];
             }
@@ -239,26 +276,7 @@ public class Car extends Square{
             this.curc();
 
 
-            double ltowin = this.position.subR(map.startStop.p2).length();
-            if(ltowin < distanceTowin){
-                System.out.println("winner");
 
-//                System.out.println(this.position.x + " " + this.position.y);
-                return timer * timeValue;
-
-
-            }
-
-            if(this.isColisionWith(allMapWalls)){
-//                System.out.println(this.position.x + " " + this.position.y + "colision " );
-                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
-            }
-            timer++;
-            if(timer > maxTime){
-//                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
-                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
-
-            }
 
         }
 
@@ -266,12 +284,12 @@ public class Car extends Square{
 
     double curkCarResultRender(Graphics g, Camera cam, Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
 
-        this.position = new Vector2(map.startStop.p1);
-        this.rotation = 0;
-
-        this.speed = 0;
-
-        this.curc();
+//        this.position = new Vector2(map.startStop.p1);
+//        this.rotation = 0;
+//
+//        this.speed = 0;
+//
+//        this.curc();
 
         ArrayList<Line2d> allMapWalls = new ArrayList<>();
         allMapWalls.addAll(map.wall1);
@@ -282,6 +300,28 @@ public class Car extends Square{
         int timer = 0;
 
         while (true){
+            double ltowin = this.position.subR(map.startStop.p2).length();
+            if(ltowin < distanceTowin){
+                System.out.println("winner");
+                return timer * timeValue;
+
+
+            }
+
+            if(this.isColisionWith(allMapWalls)){
+                System.out.println(this.position.x + " " + this.position.y + "colision " );
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+//                return  maxTime;
+            }
+            timer++;
+            if(timer > maxTime){
+                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
+                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+
+            }
+
+
+
 
             double[] inputs = new double[this.countOfRays + 1];
             double[] distances = this.distancesToWall(allMapWalls );
@@ -291,7 +331,7 @@ public class Car extends Square{
             inputs [distances.length] = this.speed/ this.maxSpeed;
 
 
-            double[] resul = n.curk(distances);
+            double[] resul = n.curk(inputs);
 
             if( resul[0] > resul[1]){
                 this.moveAcceleraion(1);
@@ -314,26 +354,136 @@ public class Car extends Square{
             this.render(g, cam);
 
 
+
+
+        }
+
+    }
+    Traektoria curkCarTraektorie(Map map, NeuroModel n,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue){
+
+//        this.position = new Vector2(map.startStop.p1);
+//        this.rotation = 0;
+//
+//        this.speed = 0;
+//
+//        this.curc();
+        ArrayList<Line2d> allMapWalls = new ArrayList<>();
+        allMapWalls.addAll(map.wall1);
+        allMapWalls.addAll(map.wall2);
+
+        boolean isCarActive = true;
+
+        int timer = 0;
+        Vector2 lastPoint = new Vector2(map.startStop.p1);
+
+        ArrayList<Car> cars = new ArrayList<>();
+        ArrayList<Double> speeds = new ArrayList<>();
+
+        while (true){
             double ltowin = this.position.subR(map.startStop.p2).length();
             if(ltowin < distanceTowin){
-                System.out.println("winner");
-                return timer * timeValue;
+
+                break;
 
 
             }
 
             if(this.isColisionWith(allMapWalls)){
-                System.out.println(this.position.x + " " + this.position.y + "colision " );
-                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
+                break;
             }
             timer++;
             if(timer > maxTime){
-                System.out.println(this.position.x + " " + this.position.y + "max TIme " + timer) ;
-                return maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue;
-
+                break;
             }
 
+            double[] inputs = new double[this.countOfRays + 1];
+            double[] distances = this.distancesToWall(allMapWalls );
+            for(int i = 0; i < distances.length; i++){
+                inputs[i] = distances[i];
+            }
+            inputs [distances.length] = this.speed/ this.maxSpeed;
+
+            double[] resul = n.curk(inputs);
+
+            if( resul[0] > resul[1]){
+                this.moveAcceleraion(1);
+            }else{
+                this.moveAcceleraion(-1);
+            }
+
+
+            if( resul[2] > resul[3] && resul[2] > resul[4]){
+                this.rot(1);
+            }
+            if( resul[3] > resul[2] && resul[3] > resul[4]){
+                this.rot(-1);
+            }if(resul[4] > resul[2] && resul[4] > resul[3]){
+                this.rot(0);
+            }
+
+            this.curc();
+
+
+            Car oneCar = new Car( this);
+            oneCar.speed = this.speed;
+            cars.add(oneCar);
+            speeds.add(this.speed);
+
+
         }
+        Car[] carsM = new Car[cars.size()];
+        carsM = cars.toArray(carsM);
+
+        Double[] speedsM = new Double[speeds.size()];
+        speedsM = speeds.toArray(speedsM);
+
+        double[] speedsMprimitive  = new double[speeds.size()];
+        for(int i = 0; i < speedsM.length; i++){
+            speedsMprimitive[i] = speedsM[i];
+        }
+
+        Traektoria tr = new Traektoria(carsM, speedsMprimitive);
+        return tr;
+    }
+    void moveByNeuro(Graphics g, Camera cam, Map map, NeuroModel n){
+
+
+        ArrayList<Line2d> allMapWalls = new ArrayList<>();
+        allMapWalls.addAll(map.wall1);
+        allMapWalls.addAll(map.wall2);
+
+
+
+        double[] inputs = new double[this.countOfRays + 1];
+        double[] distances = this.distancesToWall(allMapWalls );
+        for(int i = 0; i < distances.length; i++){
+            inputs[i] = distances[i];
+        }
+        inputs [distances.length] = this.speed/ this.maxSpeed;
+
+
+        double[] resul = n.curk(inputs);
+
+        if( resul[0] > resul[1]){
+            this.moveAcceleraion(1);
+        }else{
+            this.moveAcceleraion(-1);
+        }
+
+
+        if( resul[2] > resul[3] && resul[2] > resul[4]){
+            this.rot(1);
+        }
+        if( resul[3] > resul[2] && resul[3] > resul[4]){
+            this.rot(-1);
+        }if(resul[4] > resul[2] && resul[4] > resul[3]){
+            this.rot(0);
+        }
+
+        this.curc();
+
+        this.render(g, cam);
+
 
     }
 }

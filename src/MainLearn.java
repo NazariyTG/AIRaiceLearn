@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class MainLearn {
 
 
+
     public static void main(String[] args) {
 
         int maxTimeGeneration = 2500;
@@ -22,9 +23,10 @@ public class MainLearn {
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
 //    double myltipliers[] = {0.000002,0.2 ,2,20, 0.02 , 0.0002};
 
-
+        boolean ISITSTARTRANDOM = true; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
+        int MaxFaileRandom = 10000;
         //neuro
-        int NOFMODEL = 2;
+        int NOFMODEL = 4;
         int countOfInput = 11;
         int wightModel = 3;
         int heightOfModel = 11;
@@ -58,9 +60,37 @@ public class MainLearn {
 
         double bestResultView = Double.MAX_VALUE;
 
-//        Car car = new Car(new Vector2(map.startStop.p1),  0 ,100, 50, COUNTOFRAYS, radiusVIEW, carFov);
-        Car car;
+        Car car = new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, carFov);
+//        Car car;
+        int curentFaileRandom =0;
 
+        bestResultView = car.curkCarResult(map, nModel,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
+        while(ISITSTARTRANDOM){
+            car = new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, carFov);
+
+            NeuroModel nRandom = new NeuroModel(nModel);
+            nRandom.setRandom(1,1);
+
+            double currentResult = car.curkCarResult(map, nRandom,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
+
+            if(currentResult < bestResultView){
+                bestResultView = currentResult;
+                nModel = new NeuroModel(nRandom);
+                curentFaileRandom = 0;
+                System.out.println("new best result by Random " +bestResultView);
+            }
+            if(curentFaileRandom > MaxFaileRandom){
+                ISITSTARTRANDOM = false;
+
+            }
+            curentFaileRandom++;
+//            System.out.println(bestResultView);
+
+
+        }
+
+        System.out.println("Now Leanring");
+        nModel.saveNeruonModel(NOFMODEL);
 
         while(curentGeneration < maxGeneration) {
             curentGeneration++;
@@ -97,6 +127,7 @@ public class MainLearn {
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
                         nModel.setWeith(curentChangeIndex, ((minI - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getWeith(curentChangeIndex));
+                        nModel.saveNeruonModel(NOFMODEL);
 
                     }else {
                         for (int i = 0; i < LEARNTYPECOUNT; i ++){
@@ -121,25 +152,22 @@ public class MainLearn {
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
                         nModel.setB(curentChangeIndex - countOfAllWeght, ((minI - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getB(curentChangeIndex - countOfAllWeght));
-
+                        nModel.saveNeruonModel(NOFMODEL);
                     }
 
 
 
                 }
-                nModel.safeToFile("N_" + NOFMODEL + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
-                System.out.println("neoro safe");
+
 
 
             }
-            nModel.safeToFile("N_" + NOFMODEL + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
-            System.out.println("neoro safe");
+
 
 
 
         }
 
-        nModel.safeToFile("N_" + NOFMODEL + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
 
 
     }

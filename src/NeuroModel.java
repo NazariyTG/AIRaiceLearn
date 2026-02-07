@@ -474,6 +474,10 @@ public class NeuroModel {
             return 0;
         }
     }
+    void saveNeruonModel(int NOFMODEL){
+        this.safeToFile("N_" + NOFMODEL + "_" + this.countOfInpunts + "_" + this.wightOfModel + "_" +this.heightOfModel + "_" + this.countofOutput);
+        System.out.println("neuro safe :N_" + NOFMODEL + "_" + this.countOfInpunts + "_" + this.wightOfModel + "_" +this.heightOfModel + "_" + this.countofOutput);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -493,6 +497,8 @@ public class NeuroModel {
                 Arrays.deepEquals(weightOfOutput, that.weightOfOutput) &&
                 Arrays.equals(bOnOutputs, that.bOnOutputs);
     }
+
+
 }
 
 

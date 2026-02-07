@@ -33,6 +33,7 @@ public class Square extends Object2d{
             lines[i] = new Line2d();
         }
         curc();
+
     }
 //    void curc(){
 //        Vector2[] p = new Vector2[4]; // p = point before rotation

@@ -28,19 +28,21 @@ public class MainCarControl extends JPanel implements MouseListener{
     static boolean ISRENDERCAR1= true;
     static boolean ISRENDERCAR= true;
     static  boolean ISRENDERRAYS= false;
-    static boolean ISRENDERRAY = true;
+    static boolean ISRENDERRAY = false;
     boolean ISRENDERMAP= true;
+
+    boolean ISRENDERTRAEKTORIE = true;
 
     static final boolean ISRENDERFIRSVIE= true;
 
     boolean ISCARSTOP = false;
-    boolean ISCARNEURONS = false;
+    boolean ISCARNEURONS = true;
 
     Vector2 centerOfSCreen = new Vector2(WINDOWWITH, WINDOWHEINGH);
     Vector2 centerOfScreenWithRay = new Vector2 (WINDOWHEINGH /2, WINDOWWITH/2 + WINDOWHEINGH/8);
     Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
 
-    int NOFMODEL = 2;
+    int NOFMODEL = 4;
 //    int COUNTOFRAYS = 10;
     int countOfInput = 11;
 
@@ -123,7 +125,8 @@ public class MainCarControl extends JPanel implements MouseListener{
 
 
     Car myCar;
-    Car botCar;
+    Car botCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
+    Traektoria tr;
 
     void updateLearn(){
         for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
@@ -252,8 +255,6 @@ public class MainCarControl extends JPanel implements MouseListener{
     }
 
 
-
-
     void learn(double resultsWeight[][], double resultsNeuron[][]){
 
 
@@ -374,14 +375,28 @@ public class MainCarControl extends JPanel implements MouseListener{
         // colision
 
         g.setColor(Color.BLUE);
-        if(myCar.isColisionWith(mapWalls)){
-            myCar.position = new Vector2(map.startStop.p1);
-            myCar.rotation=0;
+
+
+        if(ISRENDERTRAEKTORIE) tr.render(g,cam);
+
+
+        if(ISRENDERMAP) map.render(g, cam);
+
+
+        if(ISCARNEURONS){
+            myCar.moveByNeuro(g, cam, map,nModel);
+
+        }else {
+            myCar.moveAcceleraion(carMoument);
+            myCar.rot(carR);
+            myCar.render(g, cam);
+            myCar.curc();
         }
+
         if(ISRENDERRAY) {
             double[] distances;
             if(ISRENDERMAP)
-            distances = myCar.distancesToWallRenderRay(mapWalls , g ,cam);
+                distances = myCar.distancesToWallRenderRay(mapWalls , g ,cam);
             else distances = myCar.distancesToWall(mapWalls);
 
             g.setColor(Color.WHITE);
@@ -393,48 +408,20 @@ public class MainCarControl extends JPanel implements MouseListener{
             }
         }
 
-        if(ISRENDERMAP) map.render(g, cam);
-
-        if(ISCARNEURONS){
-            double[] inputs = new double[myCar.countOfRays + 1];
-            double[] distances = myCar.distancesToWall(mapWalls );
-            for(int i = 0; i < distances.length; i++){
-                inputs[i] = distances[i];
-            }
-            inputs [distances.length] = myCar.speed/ myCar.maxSpeed;
-            double[] resul = nModel.curk(inputs);
-            if( resul[0] > resul[1]){
-                myCar.moveAcceleraion(1);
-            }else{
-                myCar.moveAcceleraion(-1);
-            }
 
 
-            if( resul[2] > resul[3] && resul[2] > resul[4]){
-                myCar.rot(1);
-            }
-            if( resul[3] > resul[2] && resul[3] > resul[4]){
-                myCar.rot(-1);
-            }if(resul[4] > resul[2] && resul[4] > resul[3]){
-                myCar.rot(0);
-            }
-
-
-
-        }else {
-            myCar.moveAcceleraion(carMoument);
-            myCar.rot(carR);
-        }
-        myCar.curc();
+        time++;
 
         if(CAMERAMODE == 1)
         cam.position = myCar.position.subR(centerOfSCreen);
 
 
-        myCar.render(g, cam);
-        Car car = new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, 240);
 
-//        System.out.println(car.curkCarResultRender(g, cam, map, nModel,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue));
+        botCar = new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, 240);
+
+
+//        botCar.curkCarTraektorieRender(g, cam, map, nModel,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
+//        botCar.curkCarResultRender(g, cam, map, nModel,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
 //        System.out.println("speed " + myCar.speed);
         Font oldFont = g.getFont();
 
@@ -451,7 +438,12 @@ public class MainCarControl extends JPanel implements MouseListener{
             carMoument = 0;
             carR = 0;
         }
+//        myCar.render(g, cam);
+        if(myCar.isColisionWith(mapWalls) ) {
 
+            myCar = new Car(new Vector2(map.startStop.p1), 0, 100, 50, countOfInput - 1, radiusVIEW, 240);
+
+        }
 
     }
 
@@ -460,7 +452,6 @@ public class MainCarControl extends JPanel implements MouseListener{
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
         myCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
-        botCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
 
 
         countOfAllWeght = nModel.countOfInpunts * nModel.heightOfModel + (nModel.wightOfModel - 1) * nModel.heightOfModel * nModel.heightOfModel + nModel.heightOfModel * nModel.countofOutput;
@@ -470,11 +461,9 @@ public class MainCarControl extends JPanel implements MouseListener{
 
         nModel.readFromFile("N_" + NOFMODEL + "_" + nModel.countOfInpunts + "_" + nModel.wightOfModel + "_" +nModel.heightOfModel + "_" + nModel.countofOutput);
 
+        Car traektoriaCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
 
-
-;
-
-
+        tr = traektoriaCar.curkCarTraektorie(map, nModel,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
 
 
 
