@@ -19,11 +19,11 @@ public class MainLearn {
         int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
 
 //        double myltipliers[] = {2, 0.2 , 0.02 };
-        double myltipliers[] = {2, 0.2 , 0.02 ,20};
+//        double myltipliers[] = {2, 0.2 , 0.02 ,20};
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
-//    double myltipliers[] = {0.000002,0.2 ,2,20, 0.02 , 0.0002};
+    double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
 
-        boolean ISITSTARTRANDOM = true; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
+        boolean ISITSTARTRANDOM = false; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
         int MaxFaileRandom = 10000;
         //neuro
         int NOFMODEL = 4;
@@ -127,7 +127,7 @@ public class MainLearn {
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
                         nModel.setWeith(curentChangeIndex, ((minI - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getWeith(curentChangeIndex));
-                        nModel.saveNeruonModel(NOFMODEL);
+
 
                     }else {
                         for (int i = 0; i < LEARNTYPECOUNT; i ++){
@@ -152,19 +152,19 @@ public class MainLearn {
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
                         nModel.setB(curentChangeIndex - countOfAllWeght, ((minI - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getB(curentChangeIndex - countOfAllWeght));
-                        nModel.saveNeruonModel(NOFMODEL);
+
                     }
 
 
 
                 }
-
+                nModel.saveNeruonModel(NOFMODEL);
 
 
             }
 
 
-
+            nModel.saveNeruonModel(NOFMODEL);
 
         }
 

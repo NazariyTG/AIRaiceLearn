@@ -65,8 +65,14 @@ public class Vector2 {
         this.y = y / length;
     }
 
+//    boolean getAngel(){
+//
+//    }
+
+
     void drawPoint(int radius , Graphics g , Camera cam){
         g.fillRect((int) (x- cam.position.x- radius/2), (int) (y- cam.position.y  - radius/2),  radius,radius);
     }
+
 
 }

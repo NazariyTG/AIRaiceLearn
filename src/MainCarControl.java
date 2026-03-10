@@ -8,9 +8,9 @@ public class MainCarControl extends JPanel implements MouseListener{
     static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
-    static int MAXTIMEFORGENERATION = 700;
+    static int MAXTIMEFORGENERATION = 2000;
 
-    int distanceTOwin = 100;
+    int distanceTOwin = 0;
 
     //learn
     int timeValue = 2;
@@ -42,25 +42,28 @@ public class MainCarControl extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithRay = new Vector2 (WINDOWHEINGH /2, WINDOWWITH/2 + WINDOWHEINGH/8);
     Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
 
+    //neuro
     int NOFMODEL = 4;
-//    int COUNTOFRAYS = 10;
     int countOfInput = 11;
+    int wightModel = 3;
+    int heightOfModel = 11;
 
     int CountOfOutput = 5;
 
-    NeuroModel nModel = new NeuroModel(countOfInput,3,11,CountOfOutput);
 
+    NeuroModel nModel = new NeuroModel(countOfInput,wightModel,heightOfModel,CountOfOutput);
 
+    // ray settings
     int CarFov = 240; /// 240
-
     int radiusVIEW = 700;
 
+
+    // map settings
     int mapIndex = 4;
 
     double FOVCOF = 0.7;
 
 
-    boolean isRenderMap = true;
 
     double carMoument = 0;
     double carR = 0;
@@ -74,287 +77,20 @@ public class MainCarControl extends JPanel implements MouseListener{
 
 
 
-    double bestResult = Double.MAX_VALUE;
-    int coutSameNeurons;
-
     Map map = new Map();
     ArrayList<Line2d> mapWalls = new ArrayList<>();
-    Vector2 mouse = new Vector2();
-    Vector2 mouseDelta = new Vector2();
+
 
     Vector2 oldmouse = new Vector2();
     Camera cam = new Camera();
 
 
-
-    double resultsWeight[][];
-    double resultsNeuron[][];
-
-    Car carsWeights[][];
-    Car carsNeurons[][];
-
-//    NeuroModel neuroModelsWeightsOrig[] ;
-//    NeuroModel neuroModelsNeuronsOrig[] ;
-
-    NeuroModel neuroModelsWeightsLearn[][] ;
-    NeuroModel neuroModelsNeuronsLearn[][] ;
-
-
-
-
-
-
-
-
-    boolean isCarAliveWeight[][];
-    boolean isCarAliveNeurons[][];
-//    Vector2 carsResults[][];
-
-    int currentWeight= 0;
-    int currentNeuron= 0;
-
     int countOfAllWeght;
     int countOfALLNeurons;
-
-
-    int currentGeneration = 0;
-
-    double deltaLearn = 1;
-// Vector2[] carsResults
-
-
 
     Car myCar;
     Car botCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
     Traektoria tr;
-
-    void updateLearn(){
-        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++) {
-                neuroModelsWeightsLearn[gWeight][i] = new NeuroModel(nModel);
-
-            }
-        }
-        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++) {
-                neuroModelsNeuronsLearn[gNeurons][i] = new NeuroModel(nModel);
-
-            }
-        }
-    }
-
-
-    void setLearn(){
-        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++) {
-                neuroModelsWeightsLearn[gWeight][i] = new NeuroModel(nModel);
-            }
-        }
-        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++) {
-                neuroModelsNeuronsLearn[gNeurons][i] = new NeuroModel(nModel);
-            }
-        }
-
-        for(int w = 0; w < countOfAllWeght; w++) {
-            for (int i = 0; i < LEARNTYPECOUNT; i++) {
-                carsWeights[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
-            }
-        }
-        for(int w = 0; w < countOfALLNeurons; w++) {
-            for (int i = 0; i < LEARNTYPECOUNT; i++) {
-                carsNeurons[w][i] =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput - 1, radiusVIEW, CarFov);
-            }
-        }
-
-
-
-        for(int j = 0; j <LEARNTYPECOUNT; j++){
-            for(int i = 0 ; i < countOfAllWeght; i ++){
-                isCarAliveWeight[i][j] = true;
-            }
-            for(int i = 0 ; i < countOfALLNeurons; i++){
-                isCarAliveNeurons[i][j] = true;
-            }
-
-
-        }
-
-    }
-
-    void resetAllCars(){
-
-
-        for(int j = 0; j <LEARNTYPECOUNT; j++){
-            for(int i = 0 ; i < countOfAllWeght; i ++){
-                isCarAliveWeight[i][j] = true;
-                carsWeights[i][j].position = new Vector2(map.startStop.p1);
-                carsWeights[i][j].rotation = 0;
-                carsWeights[i][j].curc();
-
-            }
-            for(int i = 0 ; i < countOfALLNeurons; i++){
-                isCarAliveNeurons[i][j] = true;
-                carsNeurons[i][j].position = new Vector2(map.startStop.p1);
-                carsNeurons[i][j].rotation = 0;
-                carsNeurons[i][j].curc();
-            }
-
-        }
-    }
-
-    void changeLearn(double mylt){
-        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++){
-
-                neuroModelsWeightsLearn[gWeight][i].setWeith(gWeight, i - ((LEARNTYPECOUNT - 1.0)  / 2)  + nModel.getWeith(gWeight)) ;
-
-
-            }
-
-
-        }
-        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++){
-                neuroModelsNeuronsLearn[gNeurons][i].setB(gNeurons, i - ((LEARNTYPECOUNT - 1.0)  / 2)  + nModel.getB(gNeurons));
-            }
-
-        }
-    }
-    void changeRandomLearn(double mylt){
-        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++){
-
-                neuroModelsWeightsLearn[gWeight][i].setWeith(gWeight, ((i -1.0)/2 * mylt) * Math.random()) ;
-
-            }
-
-
-        }
-        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++){
-                neuroModelsNeuronsLearn[gNeurons][i].setB(gNeurons, ((i -1.0)/2 * mylt) * Math.random());
-            }
-
-        }
-    }
-    void setRandom(){
-        for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++){
-                neuroModelsWeightsLearn[gWeight][i].setRandom(1,1);
-            }
-
-
-        }
-        for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
-            for(int i = 0; i < LEARNTYPECOUNT; i++){
-                neuroModelsNeuronsLearn[gNeurons][i].setRandom(1,1);
-            }
-
-        }
-    }
-
-
-    void learn(double resultsWeight[][], double resultsNeuron[][]){
-
-
-        double globalMinResult=  resultsWeight[0][0];
-        int[] globalMinIndex = {0,0};
-        boolean isItWeight = true;
-
-        for(int i = 0; i < countOfAllWeght; i++){
-
-//            double lMinResult=  resultsWeight[0][0];
-
-
-            for(int j = 0; j < LEARNTYPECOUNT; j++){
-                if (resultsWeight[i][j] < globalMinResult){
-
-                    if(j != (LEARNTYPECOUNT-1.0) /2 ) {
-//                    globalMinResult = resultsWeight[i][j];
-//                    nModel.setWeith(i, neuroModelsWeightsLearn[i][j].getWeith(i));
-                        globalMinResult = resultsWeight[i][j];
-                        globalMinIndex[0] = i;
-                        globalMinIndex[1] = j;
-                    }else {
-                        if(coutSameNeurons < myltipliers.length){
-                            globalMinResult = resultsWeight[i][j];
-                            globalMinIndex[0] = i;
-                            globalMinIndex[1] = j;
-                        }
-
-                    }
-                }
-            }
-
-//            nModel.setWeith(i, neuroModelsWeightsLearn[i][minJ].getWeith(i));
-
-        }
-        for(int i = 0; i < countOfALLNeurons; i++){
-//            double lMinResult=  resultsNeuron[0][0];
-
-            for(int j = 0; j < LEARNTYPECOUNT; j++){
-                if (resultsNeuron[i][j] < globalMinResult){
-                    if(j != (LEARNTYPECOUNT-1.0) /2 ) {
-                        globalMinResult = resultsNeuron[i][j];
-                        globalMinIndex[0] = i;
-                        globalMinIndex[1] = j;
-                        isItWeight = false;
-//                    nModel.setB(i, neuroModelsNeuronsLearn[i][j].getB(i));
-                    }else {
-                        if(coutSameNeurons < myltipliers.length){
-                            globalMinResult = resultsNeuron[i][j];
-                            globalMinIndex[0] = i;
-                            globalMinIndex[1] = j;
-                            isItWeight = false;
-                        }
-                    }
-
-                }
-            }
-
-            //nModel.setB(i, neuroModelsNeuronsLearn[i][minJ].getB(i));
-
-        }
-        if(globalMinResult < bestResult){
-            bestResult = globalMinResult;
-            System.out.println("new best result " + bestResult);
-        }
-
-
-
-//        if(isItWeight)  nModel.setWeith(globalMinIndex[0], neuroModelsWeightsLearn[globalMinIndex[0]][globalMinIndex[1]].getWeith(globalMinIndex[0]));
-//        else nModel.setB(globalMinIndex[0], neuroModelsNeuronsLearn[globalMinIndex[0]][globalMinIndex[1]].getB(globalMinIndex[0]));
-        if(isItWeight)  nModel = new NeuroModel(neuroModelsWeightsLearn[globalMinIndex[0]][globalMinIndex[1]]);
-        else nModel = new NeuroModel(neuroModelsNeuronsLearn[globalMinIndex[0]][globalMinIndex[1]]);
-
-        if (globalMinIndex[1] == (LEARNTYPECOUNT-1.0) /2){
-            coutSameNeurons++;
-        }else {
-            coutSameNeurons = 0;
-        }
-
-        if(coutSameNeurons > myltipliers.length +1){
-            coutSameNeurons = 0;
-        }
-        System.out.println(coutSameNeurons);
-
-        updateLearn();
-        changeLearn(myltipliers[curentMultp]);
-//        changeRandomLearn(myltipliers[curentMultp]);
-
-
-
-        curentMultp++;
-        if(curentMultp > myltipliers.length - 1) curentMultp = 0;
-        currentGeneration++;
-        System.out.println("Generation: " + currentGeneration);
-
-    }
-
-    void drawPoint(Vector2 positon, int radius , Graphics g , Camera cam){
-        g.fillRect((int) (positon.subR(cam.position).x - radius/2), (int) (positon.subR(cam.position).y  - radius/2),  radius,radius);
-    }
 
 
 
@@ -382,9 +118,11 @@ public class MainCarControl extends JPanel implements MouseListener{
 
         if(ISRENDERMAP) map.render(g, cam);
 
+        if(isMapEditinEctive) map.startStop.render(g,cam);
+
 
         if(ISCARNEURONS){
-            myCar.moveByNeuro(g, cam, map,nModel);
+            myCar.moveByNeuroRender(g, cam, map,nModel);
 
         }else {
             myCar.moveAcceleraion(carMoument);
@@ -432,7 +170,7 @@ public class MainCarControl extends JPanel implements MouseListener{
 
 
 
-        if(ISRENDERMAP) map.render(g, cam);
+        //if(ISRENDERMAP) map.render(g, cam);
 
         if(ISCARSTOP) {
             carMoument = 0;
@@ -514,7 +252,7 @@ public class MainCarControl extends JPanel implements MouseListener{
             public void keyPressed(KeyEvent e) {
         // S — зберегти
         if (e.getKeyCode() == KeyEvent.VK_I) {
-            map.safeToFile("map.txt");
+            map.safeToFile("map"+mapIndex+ ".txt");
             System.out.println("Map saved");
         }
         if (e.getKeyCode() == KeyEvent.VK_E) {
@@ -546,13 +284,13 @@ public class MainCarControl extends JPanel implements MouseListener{
             nModel.setRandom(1,1);
             for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
                 for(int i = 0; i < LEARNTYPECOUNT; i++) {
-                    neuroModelsWeightsLearn[gWeight][i].setRandom(1,1);
+                    //neuroModelsWeightsLearn[gWeight][i].setRandom(1,1);
 
                 }
             }
             for(int gNeurons = 0; gNeurons < countOfALLNeurons; gNeurons++){
                 for(int i = 0; i < LEARNTYPECOUNT; i++) {
-                    neuroModelsNeuronsLearn[gNeurons][i].setRandom(1,1);
+                    //neuroModelsNeuronsLearn[gNeurons][i].setRandom(1,1);
 
                 }
             }
