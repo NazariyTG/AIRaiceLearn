@@ -23,7 +23,7 @@ public class MainLearn {
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
     double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
 
-        boolean ISITSTARTRANDOM = false; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
+        boolean ISITSTARTRANDOM = true; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
         int MaxFaileRandom = 10000;
         //neuro
         int NOFMODEL = 4;

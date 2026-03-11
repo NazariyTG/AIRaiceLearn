@@ -11,12 +11,12 @@ public class MainLearnWithBot {
         int distanceVelue = 5;
         int colisionValue = 30000;
 
-        int LEARNTYPECOUNT = 7;  // neparni ///////////////////////////
+        int LEARNTYPECOUNT = 5;  // neparni ///////////////////////////
 
-//        double myltipliers[] = {2, 0.2 , 0.02 };
+        double myltipliers[] = {2, 0.2 , 0.02 };
 //        double myltipliers[] = {2, 0.2 , 0.02 ,20};
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
-    double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
+//    double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
 
         boolean ISITSTARTRANDOM = false; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
         int MaxFaileRandom = 10000;
@@ -26,7 +26,7 @@ public class MainLearnWithBot {
 
 
         //neuro
-        int NOFMODEL = 1;
+        int NOFMODEL = 5;
         int countOfInput = 21;
         int wightModel = 3;
         int heightOfModel = 11;
@@ -138,12 +138,18 @@ public class MainLearnWithBot {
         System.out.println("Now Leanring");
         nModel.saveNeruonModel(NOFMODEL);
 
+        Vector2 spawnRandomOffset = new Vector2(Math.random() * radiusSpawnRanmon,Math.random() * radiusSpawnRanmon);
         while(curentGeneration < maxGeneration) {
             curentGeneration++;
             System.out.println("current Generation: " + curentGeneration);
 
             for (int myltIndex = 0; myltIndex < myltipliers.length; myltIndex++) {
                 double currenMylt = myltipliers[myltIndex];
+
+                if(ISSPAWNPOSITIONRANDOM) {
+                    spawnRandomOffset = new Vector2(Math.random() * radiusSpawnRanmon, Math.random() * radiusSpawnRanmon);
+                    bestResultView = Double.MAX_VALUE;
+                }
 
                 for (curentChangeIndex = 0; curentChangeIndex < countOfALLNeurons + countOfAllWeght; curentChangeIndex++) {
                     double[] results = new double[LEARNTYPECOUNT];
@@ -156,7 +162,7 @@ public class MainLearnWithBot {
                             NeuroModel neurochanged = new NeuroModel(nModel);
                             neurochanged.setWeith(curentChangeIndex, ((i - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getWeith(curentChangeIndex));
                             if(ISSPAWNPOSITIONRANDOM)
-                            car = new Car((new Vector2(map.startStop.p1)).subR(new Vector2(Math.random() * radiusSpawnRanmon,Math.random() * radiusSpawnRanmon)),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
+                            car = new Car((new Vector2(map.startStop.p1)).subR(spawnRandomOffset),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
                             else
                             car = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
 //                            Car[] cars = new Car[countOfCar];
@@ -171,8 +177,8 @@ public class MainLearnWithBot {
 
 
                         }
-                        double minV = results[0];
-                        int minI= 0;
+                        double minV = results[(int) (LEARNTYPECOUNT - 1.0)  / 2];
+                        int minI= (int) (LEARNTYPECOUNT - 1.0)  / 2;
                         for(int i = 0; i < results.length; i++){
                             if(results[i] < minV){
                                 minV = results[i];

@@ -71,7 +71,9 @@ public class Vector2 {
 
 
     void drawPoint(int radius , Graphics g , Camera cam){
+        g.setColor(Color.RED);
         g.fillRect((int) (x- cam.position.x- radius/2), (int) (y- cam.position.y  - radius/2),  radius,radius);
+        g.setColor(Color.BLUE);
     }
 
 

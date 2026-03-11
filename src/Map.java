@@ -10,11 +10,15 @@ public class Map {
     ArrayList<Line2d> wall1 = new ArrayList<>();
     ArrayList<Line2d> wall2 = new ArrayList<>();
 
+
     Line2d startStop = new Line2d();
 
     Vector2 activePointWall1 = null;
     Vector2 activePointWall2 = null;
     boolean activePointWall3 = true;
+
+    int selectionPoint = 0;
+    int wallsIndexSelection = 0;
 
 
     void addWall(int activeWall, Vector2 p, Camera cam){
@@ -49,6 +53,89 @@ public class Map {
 
 
         }
+
+    }
+    void changePoint(Vector2 mouseP){
+
+        if(wallsIndexSelection == 0){
+            if(selectionPoint ==0)
+                wall1.get(0).p1.add( mouseP);
+            else if (selectionPoint > wall1.size()-1) {
+                wall1.get(selectionPoint-1).p2.add( mouseP);
+            } else {
+                wall1.get(selectionPoint).p1.add( mouseP);
+                wall1.get(selectionPoint-1).p2.add( mouseP);
+
+            }
+        }
+        if(wallsIndexSelection ==1){
+            if(selectionPoint ==0)
+                wall2.get(0).p1.add( mouseP);
+            else if (selectionPoint > wall2.size()-1) {
+                wall2.get(selectionPoint-1).p2.add( mouseP);
+            } else {
+                wall2.get(selectionPoint).p1.add( mouseP);
+                wall2.get(selectionPoint-1).p2.add( mouseP);
+
+            }
+        }
+        if(wallsIndexSelection ==2){
+            if(selectionPoint ==0)
+                startStop.p1.add( mouseP);
+            else
+                startStop.p2.add( mouseP);
+
+
+        }
+    }
+
+    void selectPoint(Vector2 mousePosition){
+        double minDistaice = Float.MAX_VALUE;
+        double curentDist;
+
+
+
+        for( int i = 0; i < wall1.size() +1; i++){
+            if( i < wall1.size())
+            curentDist = mousePosition.subR(wall1.get(i).p1).length();
+            else curentDist = mousePosition.subR(wall1.get(i-1).p2).length();
+
+            if( curentDist < minDistaice){
+                minDistaice = curentDist;
+                selectionPoint = i;
+                wallsIndexSelection = 0;
+
+            }
+        }
+        for( int i = 0; i < wall2.size() +1; i++){
+            if( i < wall2.size())
+                curentDist = mousePosition.subR(wall2.get(i).p1).length();
+            else curentDist = mousePosition.subR(wall2.get(i-1).p2).length();
+
+            if( curentDist < minDistaice){
+                minDistaice = curentDist;
+                selectionPoint = i;
+                wallsIndexSelection = 1;
+
+            }
+        }
+
+        for(int i =0; i < 2; i++) {
+            if(i ==0)
+            curentDist = mousePosition.subR(startStop.p1).length();
+            else
+            curentDist = mousePosition.subR(startStop.p2).length();
+
+            if (curentDist < minDistaice) {
+                minDistaice = curentDist;
+                selectionPoint = i;
+                wallsIndexSelection = 2;
+
+            }
+        }
+
+
+
 
     }
 
@@ -117,15 +204,33 @@ public class Map {
         }
     }
     void render(Graphics g, Camera cam){
+        int counter  =0;
         for(Line2d l: wall1){
 //            l.p1.sub(cam.position);
 //            l.p2.sub(cam.position);
-            g.drawLine((int) l.p1.subR(cam.position).x, (int)l.p1.subR(cam.position).y,(int) l.p2.subR(cam.position).x,(int) l.p2.subR(cam.position).y);
+//            if(wallsIndexSelection == 0 || selectionPoint == counter){
+//                g.setColor(Color.RED);
+//                g.drawLine((int) l.p1.subR(cam.position).x, (int)l.p1.subR(cam.position).y,(int) l.p2.subR(cam.position).x,(int) l.p2.subR(cam.position).y);
+//                g.setColor(Color.BLUE);
+//            }
+//            else
+                g.drawLine((int) l.p1.subR(cam.position).x, (int) l.p1.subR(cam.position).y, (int) l.p2.subR(cam.position).x, (int) l.p2.subR(cam.position).y);
+
+            counter ++;
         }
+        counter  =0;
         for(Line2d l: wall2){
 //            l.p1.sub(cam.position);
-//            l.p2.sub(cam.position);
-            g.drawLine((int) l.p1.subR(cam.position).x, (int)l.p1.subR(cam.position).y,(int) l.p2.subR(cam.position).x,(int) l.p2.subR(cam.position).y);
+//            l.p2.sub(cam.position);\
+//            if(wallsIndexSelection == 1 || selectionPoint == counter){
+//                g.setColor(Color.RED);
+//                g.drawLine((int) l.p1.subR(cam.position).x, (int)l.p1.subR(cam.position).y,(int) l.p2.subR(cam.position).x,(int) l.p2.subR(cam.position).y);
+//                g.setColor(Color.BLUE);
+//            }
+//            else
+                g.drawLine((int) l.p1.subR(cam.position).x, (int) l.p1.subR(cam.position).y, (int) l.p2.subR(cam.position).x, (int) l.p2.subR(cam.position).y);
+
+            counter ++;
         }
     }
 }

@@ -43,7 +43,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
 
     //neuro
-    int NOFMODEL = 1;
+    int NOFMODEL = 5;
     int countOfInput = 21;
     int wightModel = 3;
     int heightOfModel = 11;
