@@ -59,7 +59,7 @@ public class NeuronsView extends Object2d{
         int maxValueColorRender = 1;
 
         int veticalSpace = 3;  // in radius
-        int horizontalSpace = 20; // in radius
+        int horizontalSpace = 40; // in radius
 
         if(rightClick){
             this.position.sub(mouseDelta);
@@ -90,9 +90,9 @@ public class NeuronsView extends Object2d{
         for(int i = 0; i < inputs.length; i++){
             int color = (int)  Math.max( -255,Math.min((inputs[i] / maxValueColorRender ) * 255,255));//// -255   -->   255
             if(color>0){
-                new Vector2(0, i *radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  255 ,color,255));
+                new Vector2(0, i *radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  0 ,color,0));
             }else{
-                new Vector2(0, i *radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,255,255));
+                new Vector2(0, i *radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,0,0));
             }
 
 
@@ -106,9 +106,9 @@ public class NeuronsView extends Object2d{
                 ammoun += n.weightOfIput[j][i] * inputs[i];
                 int color = (int)  Math.max(-255, Math.min((n.weightOfIput[j][i] * inputs[i] / maxValueColorRender ) * 255,255));//// -255   -->   255
                 if(color>0){
-                    new Vector2(0, j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  255 ,color,255), new Vector2(horizontalSpace * radius, i * radius *veticalSpace));
+                    new Vector2(0, j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  0 ,color,0), new Vector2(horizontalSpace * radius, i * radius *veticalSpace));
                 }else{
-                    new Vector2(0, j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  -color ,255,255), new Vector2(horizontalSpace * radius, i * radius *veticalSpace));
+                    new Vector2(0, j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  -color ,0,0), new Vector2(horizontalSpace * radius, i * radius *veticalSpace));
                 }
 
             }
@@ -117,9 +117,9 @@ public class NeuronsView extends Object2d{
 
             int color = (int)  Math.max(-255, Math.min((ammoun / maxValueColorRender ) * 255,255));//// -255   -->   255
             if(color>0){
-                new Vector2(horizontalSpace * radius, i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  255 ,color,255));
+                new Vector2(horizontalSpace * radius, i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  0 ,color,0));
             }else{
-                new Vector2(horizontalSpace * radius, i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,255,255));
+                new Vector2(horizontalSpace * radius, i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,0,0));
             }
 
 
@@ -133,9 +133,9 @@ public class NeuronsView extends Object2d{
 
                     int color = (int)  Math.max(-255, Math.min((n.weithOfNeurons[h][j][i] * neurons[h][i] / maxValueColorRender ) * 255,255));//// -255   -->   255
                     if(color>0){
-                        new Vector2((h+ 1) * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color( 255,color,255), new Vector2( (h + 2)* radius* horizontalSpace , i * radius *veticalSpace));
+                        new Vector2((h+ 1) * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color( 0,color,0), new Vector2( (h + 2)* radius* horizontalSpace , i * radius *veticalSpace));
                     }else{
-                        new Vector2((h+ 1) * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  -color ,255,255), new Vector2((h + 2) * radius* horizontalSpace + 2, i * radius *veticalSpace));
+                        new Vector2((h+ 1) * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  -color ,0,0), new Vector2((h + 2) * radius* horizontalSpace + 2, i * radius *veticalSpace));
                     }
                 }
                 ammoun += n.bOnNeurons[h+1][i];
@@ -144,9 +144,9 @@ public class NeuronsView extends Object2d{
 
                 int color = (int)  Math.max(-255, Math.min((ammoun / maxValueColorRender ) * 255,255));//// -255   -->   255
                 if(color>0){
-                    new Vector2((h + 2)* radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  255 ,color,255));
+                    new Vector2((h + 2)* radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  0 ,color,0));
                 }else{
-                    new Vector2((h + 2)* radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,255,255));
+                    new Vector2((h + 2)* radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,0,0));
                 }
 
             }
@@ -161,9 +161,9 @@ public class NeuronsView extends Object2d{
 
                 int color = (int)  Math.max(-255, Math.min((n.weightOfOutput[j][i] * neurons[n.wightOfModel-1][j]  / maxValueColorRender ) * 255,255));//// -255   -->   255
                 if(color>0){
-                    new Vector2(n.wightOfModel  * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  255 ,color,255), new Vector2((n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace));
+                    new Vector2(n.wightOfModel  * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  0 ,color,0), new Vector2((n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace));
                 }else{
-                    new Vector2(n.wightOfModel  * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  -color ,255,255), new Vector2((n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace));
+                    new Vector2(n.wightOfModel  * radius* horizontalSpace , j *radius *veticalSpace).drawLineWithZoom(g,cam,new Color(  -color ,0,0), new Vector2((n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace));
                 }
             }
             ammoun += n.bOnOutputs[i];
@@ -172,9 +172,9 @@ public class NeuronsView extends Object2d{
 
             int color = (int)  Math.max(-255, Math.min((ammoun / maxValueColorRender ) * 255,255));//// -255   -->   255
             if(color>0){
-                new Vector2( (n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  255 ,color,255));
+                new Vector2( (n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  0 ,color,0));
             }else{
-                new Vector2((n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,255,255));
+                new Vector2((n.wightOfModel + 1) * radius* horizontalSpace , i * radius *veticalSpace).drawPointWithZoom(radius,g,cam,new Color(  -color ,0,0));
             }
         }
         if( result[0] > result[1]){
