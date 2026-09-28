@@ -4,8 +4,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class MainCarControlWithBot extends JPanel implements MouseListener{
-    static int WINDOWHEINGH= 1500;
-    static int WINDOWWITH = 1000;
+//    static int WINDOWHEINGH= 1500;
+//    static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
     static int MAXTIMEFORGENERATION = 2000;
@@ -38,9 +38,9 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     boolean ISCARSTOP = false;
     boolean ISCARNEURONS = true;
 
-    Vector2 centerOfSCreen = new Vector2(WINDOWWITH, WINDOWHEINGH);
-    Vector2 centerOfScreenWithRay = new Vector2 (WINDOWHEINGH /2, WINDOWWITH/2 + WINDOWHEINGH/8);
-    Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
+    Vector2 centerOfSCreen = new Vector2(Config.WINDOWWITH, Config.WINDOWHEINGH);
+    Vector2 centerOfScreenWithRay = new Vector2 (Config.WINDOWHEINGH /2, Config.WINDOWWITH/2 + Config.WINDOWHEINGH/8);
+    Vector2 centerOfScreenWithoutRay = new Vector2(Config.WINDOWHEINGH /2, Config.WINDOWWITH/2);
 
     //neuro
     int NOFMODEL = 5;
@@ -94,8 +94,10 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 
     double carMoument = 0;
     double carR = 0;
+
     boolean leftPressed = false;
     boolean rightPressed = false;
+    int wheelSpin = 0;
 
     int time = 0;
 
@@ -120,6 +122,9 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     Traektoria tr;
 
     Car[] cars = new Car[countOfCar];
+
+
+    NeuronsView nView ;
 
 
 
@@ -156,7 +161,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         }
 
         if(ISCARNEURONS){
-            myCar.moveByNeuroRender(g, cam, map,nModel);
+            myCar.moveByNeuroRenderWithOtherCar(g, cam, map,nModel,cars, botsNeuro);
 
         }else {
             myCar.moveAcceleraion(carMoument);
@@ -172,17 +177,17 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
             else distances = myCar.distancesToWall(mapWalls);
 
             g.setColor(Color.WHITE);
-            g.fillRect(0 ,0 ,WINDOWHEINGH, 300);
+            g.fillRect(0 ,0 ,Config.WINDOWHEINGH, 300);
             g.setColor(Color.BLUE);
             for (int i = 0; i < myCar.rays.length; i++) {
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 -380, (int) ( WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distances[i]) *150));
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3- 380, (int) ( WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distances[i]) * 150));
+                g.fillRect((int) (i * Config.WINDOWHEINGH / myCar.countOfRays*FOVCOF), Config.WINDOWHEINGH / 3 -380, (int) ( Config.WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distances[i]) *150));
+                g.fillRect((int) (i * Config.WINDOWHEINGH / myCar.countOfRays*FOVCOF), Config.WINDOWHEINGH / 3- 380, (int) ( Config.WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distances[i]) * 150));
             }
             double[] distancesToCar = myCar.distancesToOtherCars(cars);
             g.setColor(Color.RED);
             for (int i = 0; i < myCar.rays.length; i++) {
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 - 300, (int) ( WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distancesToCar[i]) *50));
-                g.fillRect((int) (i * WINDOWHEINGH / myCar.countOfRays*FOVCOF), WINDOWHEINGH / 3 - 300, (int) ( WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distancesToCar[i]) * 50));
+                g.fillRect((int) (i * Config.WINDOWHEINGH / myCar.countOfRays*FOVCOF), Config.WINDOWHEINGH / 3 - 300, (int) (Config.WINDOWHEINGH / myCar.countOfRays *FOVCOF), (int) -((1 -distancesToCar[i]) *50));
+                g.fillRect((int) (i * Config.WINDOWHEINGH / myCar.countOfRays*FOVCOF), Config.WINDOWHEINGH / 3 - 300, (int) ( Config.WINDOWHEINGH / myCar.countOfRays* FOVCOF), (int) ((1- distancesToCar[i]) * 50));
             }
             g.setColor(Color.BLUE);
         }
@@ -204,7 +209,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         Font oldFont = g.getFont();
 
         g.setFont(oldFont.deriveFont(30f));
-        g.drawString("speed: " +(int) myCar.speed, 60, WINDOWWITH - 60);
+        g.drawString("speed: " +(int) myCar.speed, 60, Config.WINDOWWITH - 60);
 
 
 
@@ -229,6 +234,10 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
             myCar = new Car(new Vector2(map.startStop.p1), 0, wightCar, heightCar,( countOfInput - 1) /2, radiusVIEW, CarFov);
             setCars();
         }
+
+
+        nView.renderRealTime(g,mouseDelta, rightPressed, wheelSpin, myCar.inputsLokal);
+
 
     }
 
@@ -259,7 +268,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         tr = traektoriaCar.curkCarTraektorieWithOtherCar(map, nModel, cars,botsNeuro ,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
 
 
-
+        nView = new NeuronsView(nModel);
         setCars();
 
 
@@ -301,8 +310,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         }
         });
 
-        setFocusable(true);
-        requestFocusInWindow();
+
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -412,13 +420,23 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
         }
             }
         });
+
+        addMouseWheelListener(e -> {
+            wheelSpin -= e.getWheelRotation();
+
+
+        });
+
+
+        setFocusable(true);
+        requestFocusInWindow();
         }
 
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Java 2D");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WINDOWHEINGH, WINDOWWITH);
+        frame.setSize(Config.WINDOWHEINGH, Config.WINDOWWITH);
         frame.add(new MainCarControlWithBot());
         frame.setVisible(true);
 

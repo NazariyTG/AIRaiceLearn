@@ -17,6 +17,9 @@ public class Car extends Square{
     double fov;
     int countOfRays;
 
+
+    double[] inputsLokal;
+
     Car(Vector2 position, double rotaion,double wigth, double heingt, int countOfRays, double radiusView, double fov){
         super (position, rotaion, wigth,heingt);
         rays = new Line2d[countOfRays];
@@ -687,6 +690,7 @@ public class Car extends Square{
         inputs [distances.length] = this.speed/ this.maxSpeed;
 
 
+
         double[] resul = n.curk(inputs);
 
         if( resul[0] > resul[1]){
@@ -709,8 +713,58 @@ public class Car extends Square{
 
         this.render(g, cam);
 
+    }
+    void moveByNeuroRenderWithOtherCar(Graphics g, Camera cam, Map map, NeuroModel n, Car[] othercars, NeuroModel[] nbots){
+
+
+        ArrayList<Line2d> allMapWalls = new ArrayList<>();
+        allMapWalls.addAll(map.wall1);
+        allMapWalls.addAll(map.wall2);
+
+
+
+        inputsLokal = new double[this.countOfRays * 2 + 1];
+        double[] distances = this.distancesToWall(allMapWalls);
+        for(int i = 0; i < distances.length; i++){
+            inputsLokal[i] = distances[i];
+        }
+        double[] distancesToCar = this.distancesToOtherCars(othercars);
+        for(int i = distances.length; i < inputsLokal.length - 1; i++){
+            inputsLokal[i] = distancesToCar[ i - distancesToCar.length];
+        }
+
+
+
+        inputsLokal [distances.length] = this.speed/ this.maxSpeed;
+
+
+
+        double[] resul = n.curk(inputsLokal);
+
+        if( resul[0] > resul[1]){
+            this.moveAcceleraion(1);
+        }else{
+            this.moveAcceleraion(-1);
+        }
+
+
+        if( resul[2] > resul[3] && resul[2] > resul[4]){
+            this.rot(1);
+        }
+        if( resul[3] > resul[2] && resul[3] > resul[4]){
+            this.rot(-1);
+        }if(resul[4] > resul[2] && resul[4] > resul[3]){
+            this.rot(0);
+        }
+
+        this.curc();
+
+        this.render(g, cam);
 
     }
+
+
+
     void moveByNeuro(Map map, NeuroModel n){
 
 
@@ -725,6 +779,9 @@ public class Car extends Square{
         for(int i = 0; i < distances.length; i++){
             inputs[i] = distances[i];
         }
+
+
+
         inputs [distances.length] = this.speed/ this.maxSpeed;
 
 

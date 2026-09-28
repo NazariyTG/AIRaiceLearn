@@ -186,7 +186,7 @@ public class MainCarControl extends JPanel implements MouseListener{
     }
 
     public MainCarControl() {
-        map.readFromFile("map" +mapIndex+ ".txt");
+        map.readFromFile("map" +mapIndex+ ".txt"); 
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
         myCar =  new Car(new Vector2(map.startStop.p1),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);

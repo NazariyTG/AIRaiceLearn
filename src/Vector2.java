@@ -65,6 +65,10 @@ public class Vector2 {
         this.y = y / length;
     }
 
+    void print(){
+        System.out.println("X: " +this.x + " Y: " + this.y);
+    }
+
 //    boolean getAngel(){
 //
 //    }
@@ -74,6 +78,15 @@ public class Vector2 {
         g.setColor(Color.RED);
         g.fillRect((int) (x- cam.position.x- radius/2), (int) (y- cam.position.y  - radius/2),  radius,radius);
         g.setColor(Color.BLUE);
+    }
+    void drawPointWithZoom(int radius , Graphics g , Camera cam, Color color){
+        g.setColor(color);
+        g.fillOval( (int) (((this.x * cam.scale) - (radius * cam.scale/2) - cam.position.x) ), (int) (((this.y * cam.scale) - (radius * cam.scale/2) - cam.position.y)), (int)(radius * cam.scale),(int)(radius * cam.scale));
+    }
+    void drawLineWithZoom(Graphics g, Camera cam, Color color, Vector2 otherPoint){
+        g.setColor(color);
+        g.drawLine((int) ((this.x * cam.scale) - cam.position.x) , (int) ((this.y * cam.scale) - cam.position.y),(int) ((otherPoint.x * cam.scale) - cam.position.x) , (int) ((otherPoint.y * cam.scale) - cam.position.y));
+
     }
 
 
