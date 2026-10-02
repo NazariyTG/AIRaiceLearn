@@ -150,6 +150,7 @@ public class Car extends Square{
 
 
         }
+
         this.curc();
     }
 
@@ -428,7 +429,22 @@ public class Car extends Square{
                 this.rot(0);
             }
 
+
+
+
+
+//            System.out.println("speed" + this.speed);
+
+
+
             this.curc();
+
+
+            System.out.println("mycar");
+            this.position.print();
+            System.out.println("botCar");
+            otherCars[0].position.print();
+
 
 
 
@@ -441,12 +457,18 @@ public class Car extends Square{
 
     double curkCarResultWithOtherCarWithRespawn(Map map, NeuroModel n , Car[] otherCars, NeuroModel[] otherneurons,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue, Vector2 botPositonOffset){
 
-        otherCars[0].respawnPositionOffset(map, botPositonOffset);
+        Car[] otherCarsCopy = new Car[otherCars.length];
+        for (int i = 0; i < otherCarsCopy.length; i++) {
+            otherCarsCopy[i] = new Car(otherCars[i]);
+        }
+
+
+        otherCarsCopy[0].respawnPositionOffset(map, botPositonOffset);
 
         this.respawnPosition(map);
 
 
-        return  curkCarResultWithOtherCar(map,n ,otherCars,otherneurons, distanceTowin,maxTime,timeValue,distanceValue,colisionValue);
+        return  curkCarResultWithOtherCar(map,n ,otherCarsCopy,otherneurons, distanceTowin,maxTime,timeValue,distanceValue,colisionValue);
 
 
 
@@ -742,13 +764,11 @@ public class Car extends Square{
             inputsLokal[i] = distancesToCar[ i - distancesToCar.length];
         }
 
-
-
         inputsLokal [distances.length] = this.speed/ this.maxSpeed;
 
-
-
         double[] resul = n.curk(inputsLokal);
+
+
 
         if( resul[0] > resul[1]){
             this.moveAcceleraion(1);
@@ -766,9 +786,17 @@ public class Car extends Square{
             this.rot(0);
         }
 
+
         this.curc();
 
         this.render(g, cam);
+
+
+        System.out.println("mycar");
+        this.position.print();
+        System.out.println("botCar");
+        othercars[0].position.print();
+
 
     }
 

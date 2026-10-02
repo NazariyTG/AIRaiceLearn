@@ -182,10 +182,14 @@ public class MainLearnWithBot {
 
 
                             double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, botSpawingPosCorrector);
-                            System.out.println(result);
+
                             // 3. Повертаємо результат
                             return result;
                         }).toArray();
+//                        for(int i = 0; i < LEARNTYPECOUNT; i++){
+//                            results[i] = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, botSpawingPosCorrector);
+//                        }
+
 
                         double minV = results[0];
                         int minI = 0;
@@ -200,13 +204,17 @@ public class MainLearnWithBot {
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
 
-                        nModel = new NeuroModel(myNeuros[minI]);
+//                        nModel = new NeuroModel(myNeuros[minI]);
                     }else {
                         for (int i = 0; i < LEARNTYPECOUNT; i++) {
                             myNeuros[i] = new NeuroModel(nModel);
                             myNeuros[i].setB(curentChangeIndex - countOfAllWeght, ((i - ((LEARNTYPECOUNT - 1.0) / 2)) * currenMylt) + nModel.getB(curentChangeIndex - countOfAllWeght));
 
                         }
+
+//                        for(int i = 0; i < myCars.length; i++){
+//                            myCars[i] = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
+//                        }
 
                         results = IntStream.range(0, LEARNTYPECOUNT).parallel().mapToDouble(i -> {
                             // 1. Беремо або готуємо об'єкт для поточного індексу i
@@ -237,13 +245,13 @@ public class MainLearnWithBot {
 
 
 
-//                nModel.saveNeruonModel(NOFMODEL);
+                nModel.saveNeruonModel(NOFMODEL);
 
 
             }
 
 
-//            nModel.saveNeruonModel(NOFMODEL);
+            nModel.saveNeruonModel(NOFMODEL);
 
         }
 

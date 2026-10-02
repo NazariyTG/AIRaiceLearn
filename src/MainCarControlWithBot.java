@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.SimpleTimeZone;
 
 public class MainCarControlWithBot extends JPanel implements MouseListener{
 //    static int WINDOWHEINGH= 1500;
@@ -235,7 +236,15 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 //            botCar = new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, countOfInputBot -1, radiusVIEW, CarFov);
 
             myCar.respawnPosition(map);
+
+
+            System.out.println("curk");
+            System.out.println(myCar.curkCarResultWithOtherCarWithRespawn(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue,botSpawingPosCorrector));
+//            System.out.println(myCar.curkCarResultWithOtherCar(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue));
+
+            myCar.respawnPosition(map);
             resetCars();
+
         }
 
 
