@@ -9,15 +9,15 @@ public class MainLearnWithBot {
         int maxTimeGeneration = 3000;
 
         //learn
-        int timeValue = 30;
-        int distanceVelue = 5;
+        int timeValue = 10;
+        int distanceVelue = 1;
         int colisionValue = 3000;
 
         int distanceToWin = 100;
 
-        int LEARNTYPECOUNT = 3;  // neparni ///////////////////////////
+        int LEARNTYPECOUNT = 7;  // neparni ///////////////////////////
 
-        double myltipliers[] = {2, 0.2 , 0.02 };
+        double myltipliers[] = {2, 0.2 , 0.02,0.002 , 20};
 //        double myltipliers[] = {2, 0.2 , 0.02 ,20};
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
 //    double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
@@ -25,12 +25,18 @@ public class MainLearnWithBot {
         boolean ISITSTARTRANDOM = false ; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
         int MaxFaileRandom = 10000;
         // spawn
-        boolean ISSPAWNPOSITIONRANDOM = false;
+        boolean ISSPAWNPOSITIONRANDOM = true;
         int radiusSpawnRanmon = 20;
+
+        Vector2 spawnRandom = new Vector2(0,0);
+        int generationToStarntRandomPositon = 2;
+
+        int countRandomP = 0;
+        boolean isChangeRandomP= false;
 
 
         //neuro
-        int NOFMODEL = 501;
+        int NOFMODEL = 503;
         int countOfInput = 21;
         int wightModel = 3;
         int heightOfModel = 11;
@@ -99,7 +105,7 @@ public class MainLearnWithBot {
         cars[0].speedLimiter = botSpeedLimeter;
         cars[0].acceleration = 0.4;
 //                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-        bestResultView = car.curkCarResultWithOtherCar(map, nModel,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
+        //bestResultView = car.curkCarResultWithOtherCar(map, nModel,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
 
 
 
@@ -115,7 +121,8 @@ public class MainLearnWithBot {
 
 //        double[] results = new double[LEARNTYPECOUNT];
 
-//        bestResultView = car.curkCarResultWithOtherCar(map, nModel, cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
+        System.out.println(car.curkCarResultWithOtherCarWithRespawn(map, nModel, cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue,spawnRandom, botSpawingPosCorrector));
+
         while(ISITSTARTRANDOM){
 
             NeuroModel nRandom = new NeuroModel(nModel);
@@ -126,7 +133,7 @@ public class MainLearnWithBot {
 
 
 //                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-            double currentResult = car.curkCarResultWithOtherCar(map, nRandom,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
+            double currentResult = car.curkCarResultWithOtherCarWithRespawn(map, nRandom,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue,spawnRandom,botSpawingPosCorrector);
 
 //                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
 
@@ -149,20 +156,22 @@ public class MainLearnWithBot {
         }
 
         System.out.println("Now Leanring");
-//        nModel.saveNeruonModel(NOFMODEL);
+        nModel.saveNeruonModel(NOFMODEL);
 
-        Vector2 spawnRandomOffset = new Vector2(Math.random() * radiusSpawnRanmon,Math.random() * radiusSpawnRanmon);
         while(curentGeneration < maxGeneration) {
             curentGeneration++;
+            if(ISSPAWNPOSITIONRANDOM && curentGeneration > generationToStarntRandomPositon) {
+//                    spawnRandom = new Vector2(Math.random() * radiusSpawnRanmon, Math.random() * radiusSpawnRanmon);
+                spawnRandom.x = Math.random() * radiusSpawnRanmon;
+                spawnRandom.y = Math.random() * radiusSpawnRanmon;
+                bestResultView = Double.MAX_VALUE;
+            }
             System.out.println("current Generation: " + curentGeneration);
 
             for (int myltIndex = 0; myltIndex < myltipliers.length; myltIndex++) {
                 double currenMylt = myltipliers[myltIndex];
 
-                if(ISSPAWNPOSITIONRANDOM) {
-                    spawnRandomOffset = new Vector2(Math.random() * radiusSpawnRanmon, Math.random() * radiusSpawnRanmon);
-                    bestResultView = Double.MAX_VALUE;
-                }
+
 
                 for (int curentChangeIndex = 0; curentChangeIndex < countOfALLNeurons + countOfAllWeght; curentChangeIndex++) {
                     double[] results = new double[LEARNTYPECOUNT];
@@ -181,7 +190,7 @@ public class MainLearnWithBot {
                             // 1. Беремо або готуємо об'єкт для поточного індексу i
 
 
-                            double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, botSpawingPosCorrector);
+                            double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, spawnRandom,botSpawingPosCorrector);
 
                             // 3. Повертаємо результат
                             return result;
@@ -220,7 +229,7 @@ public class MainLearnWithBot {
                             // 1. Беремо або готуємо об'єкт для поточного індексу i
 
 
-                            double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, botSpawingPosCorrector);
+                            double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue,spawnRandom, botSpawingPosCorrector);
 
                             // 3. Повертаємо результат
                             return result;

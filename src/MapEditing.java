@@ -15,7 +15,7 @@ public class MapEditing extends JPanel implements MouseListener {
 
     boolean ISRENDERMAP= true;
 
-    boolean ISRENDERTRAEKTORIE = true;
+    boolean ISRENDERTRAEKTORIE = false;
 
     static final boolean ISRENDERFIRSVIE= true;
 
@@ -73,7 +73,7 @@ public class MapEditing extends JPanel implements MouseListener {
 
 
     // map settings
-    int mapIndex = 4                        ;
+    int mapIndex = 31                        ;
 
     double FOVCOF = 0.7;
 
@@ -132,11 +132,11 @@ public class MapEditing extends JPanel implements MouseListener {
         // colision
 
         g.setColor(Color.BLUE);
-        Car traektoriaCar =  new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput -1)/2, radiusVIEW, CarFov);
-        botsNeuro[0].readFromFile("N_" + NOFMODELBot + "_" + botsNeuro[0].countOfInpunts + "_" + botsNeuro[0].wightOfModel + "_" +botsNeuro[0].heightOfModel + "_" + botsNeuro[0].countofOutput);
-        setCars();
-        tr = traektoriaCar.curkCarTraektorieWithOtherCar(map, nModel, cars,botsNeuro ,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
-
+//        Car traektoriaCar =  new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput -1)/2, radiusVIEW, CarFov);
+//        botsNeuro[0].readFromFile("N_" + NOFMODELBot + "_" + botsNeuro[0].countOfInpunts + "_" + botsNeuro[0].wightOfModel + "_" +botsNeuro[0].heightOfModel + "_" + botsNeuro[0].countofOutput);
+//        setCars();
+//        tr = traektoriaCar.curkCarTraektorieWithOtherCar(map, nModel, cars,botsNeuro ,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
+//
 
 
         if (ISRENDERTRAEKTORIE) tr.render(g, cam);
@@ -208,7 +208,7 @@ public class MapEditing extends JPanel implements MouseListener {
         Car traektoriaCar =  new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput -1)/2, radiusVIEW, CarFov);
         botsNeuro[0].readFromFile("N_" + NOFMODELBot + "_" + botsNeuro[0].countOfInpunts + "_" + botsNeuro[0].wightOfModel + "_" +botsNeuro[0].heightOfModel + "_" + botsNeuro[0].countofOutput);
         setCars();
-        tr = traektoriaCar.curkCarTraektorieWithOtherCar(map, nModel, cars,botsNeuro ,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
+        //tr = traektoriaCar.curkCarTraektorieWithOtherCar(map, nModel, cars,botsNeuro ,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue);
 
 
 
@@ -241,7 +241,7 @@ public class MapEditing extends JPanel implements MouseListener {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     leftPressed = true;
                     map.selectPoint( (new Vector2(e.getPoint().getLocation().x,e.getPoint().getLocation().y)).addR(cam.position));
-
+                    System.out.println("SelectPoint");
 
                 }
                 if (e.getButton() == MouseEvent.BUTTON3) {
@@ -338,7 +338,10 @@ public class MapEditing extends JPanel implements MouseListener {
                         ISMOVINGPOINT = false;
                         System.out.println("movingPoint unActive");
                     }
-                    else ISMOVINGPOINT =true;
+                    else {
+                        ISMOVINGPOINT =true;
+                        System.out.println("movingPoint Active");
+                    }
                 }
 //        if (e.getKeyCode() == KeyEvent.VK_V) {
 //            CAMERAMODE = 0;

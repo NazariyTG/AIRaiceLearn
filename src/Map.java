@@ -85,7 +85,6 @@ public class Map {
             else
                 startStop.p2.add( mouseP);
 
-
         }
     }
 

@@ -41,6 +41,11 @@ public class Car extends Square{
         this.radiusView = other.radiusView;
         this.fov = other.fov;
 
+        this.acceleration = other.acceleration;
+        this.speed = other.speed;
+        this.maxSpeed = other.maxSpeed;
+        this.speedLimiter = other.speedLimiter;
+
         Line2d ray = new Line2d(position,new  Vector2( position.x + radiusView,position.y));
         ray.rotate(-fov/2);
         for(int i = 0; i < rays.length; i++){
@@ -440,10 +445,10 @@ public class Car extends Square{
             this.curc();
 
 
-            System.out.println("mycar");
-            this.position.print();
-            System.out.println("botCar");
-            otherCars[0].position.print();
+//            System.out.println("mycar");
+//            this.position.print();
+//            System.out.println("botCar");
+//            otherCars[0].position.print();
 
 
 
@@ -455,7 +460,9 @@ public class Car extends Square{
 
 
 
-    double curkCarResultWithOtherCarWithRespawn(Map map, NeuroModel n , Car[] otherCars, NeuroModel[] otherneurons,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue, Vector2 botPositonOffset){
+    double curkCarResultWithOtherCarWithRespawn(Map map, NeuroModel n , Car[] otherCars, NeuroModel[] otherneurons,int distanceTowin, int maxTime , double timeValue, double distanceValue, double colisionValue,Vector2 myCarPositionOffset, Vector2 botPositonOffset){
+
+        otherCars[0].respawnPositionOffset(map, botPositonOffset);
 
         Car[] otherCarsCopy = new Car[otherCars.length];
         for (int i = 0; i < otherCarsCopy.length; i++) {
@@ -465,7 +472,7 @@ public class Car extends Square{
 
         otherCarsCopy[0].respawnPositionOffset(map, botPositonOffset);
 
-        this.respawnPosition(map);
+        this.respawnPositionOffset(map, myCarPositionOffset);
 
 
         return  curkCarResultWithOtherCar(map,n ,otherCarsCopy,otherneurons, distanceTowin,maxTime,timeValue,distanceValue,colisionValue);
@@ -660,6 +667,7 @@ public class Car extends Square{
             double ltowin = this.position.subR(map.startStop.p2).length();
             if(ltowin < distanceTowin){
                 System.out.println (timer * timeValue);
+
                 break;
 
 
@@ -680,7 +688,7 @@ public class Car extends Square{
                 System.out.println( maxTime * timeValue + this.position.subR(map.startStop.p2).length() * distanceValue + colisionValue);
                 break;
             }
-            timer++;
+
 
             for(int i = 0; i< othercars.length; i++){
                 othercars[i].moveByNeuro(map, nbots[i] );
@@ -791,14 +799,64 @@ public class Car extends Square{
 
         this.render(g, cam);
 
+//        System.out.println("mycar");
+//        this.position.print();
+//        System.out.println("botCar");
+//        othercars[0].position.print();
 
-        System.out.println("mycar");
-        this.position.print();
-        System.out.println("botCar");
-        othercars[0].position.print();
 
 
     }
+//    void moveByNeuroRenderWithOtherCar(Graphics g, Camera cam, Map map, NeuroModel n, Car[] othercars, NeuroModel[] nbots){
+//
+//
+//        ArrayList<Line2d> allMapWalls = new ArrayList<>();
+//        allMapWalls.addAll(map.wall1);
+//        allMapWalls.addAll(map.wall2);
+//
+//
+//
+//        double[] inputs = new double[this.countOfRays * 2 + 1];
+//        double[] distances = this.distancesToWall(allMapWalls);
+//        for(int i = 0; i < distances.length; i++){
+//            inputs[i] = distances[i];
+//        }
+//        double[] distancesToCar = this.distancesToOtherCars(othercars);
+//        for(int i = distances.length; i < inputs.length - 1; i++){
+//            inputs[i] = distancesToCar[ i - distancesToCar.length];
+//        }
+//
+//        inputs [distances.length] = this.speed/ this.maxSpeed;
+//
+//        double[] resul = n.curk(inputs);
+//
+//
+//
+//        if( resul[0] > resul[1]){
+//            this.moveAcceleraion(1);
+//        }else{
+//            this.moveAcceleraion(-1);
+//        }
+//
+//
+//        if( resul[2] > resul[3] && resul[2] > resul[4]){
+//            this.rot(1);
+//        }
+//        if( resul[3] > resul[2] && resul[3] > resul[4]){
+//            this.rot(-1);
+//        }if(resul[4] > resul[2] && resul[4] > resul[3]){
+//            this.rot(0);
+//        }
+//
+//
+//        this.curc();
+//
+//        this.render(g, cam);
+//
+//
+//
+//
+//    }
 
 
 

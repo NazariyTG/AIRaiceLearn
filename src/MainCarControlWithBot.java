@@ -11,14 +11,14 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     int CAMERAMODE = 1; /// 1 -> on car
     static int MAXTIMEFORGENERATION = 3000;
 
-    int distanceTOwin = 100;
-
 
 
     //learn
     int timeValue = 10;
-    int distanceVelue = 5;
+    int distanceVelue = 1;
     int colisionValue = 3000;
+
+    int distanceTOwin = 100;
 
     final static int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
 
@@ -46,7 +46,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithoutRay = new Vector2(Config.WINDOWHEINGH /2, Config.WINDOWWITH/2);
 
     //neuro
-    int NOFMODEL = 501;
+    int NOFMODEL = 503;
     int countOfInput = 21;
     int wightModel = 3;
     int heightOfModel = 11;
@@ -229,6 +229,16 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
             myCar.respawnPosition(map);
             resetCars();
 
+            myCar.respawnPosition(map);
+
+            setCars();
+            System.out.println("curk");
+//            System.out.println(myCar.curkCarResultWithOtherCarWithRespawn(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue,botSpawingPosCorrector));
+//            System.out.println(myCar.curkCarResultWithOtherCar(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue));
+
+            myCar.respawnPosition(map);
+            resetCars();
+
 //            myCar = new Car(new Vector2(map.startStop.p1), 0, wightCar, heightCar,( countOfInput - 1) /2, radiusVIEW, CarFov);
 
         }
@@ -237,10 +247,10 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 
             myCar.respawnPosition(map);
 
-
+            setCars();
             System.out.println("curk");
-            System.out.println(myCar.curkCarResultWithOtherCarWithRespawn(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue,botSpawingPosCorrector));
-//            System.out.println(myCar.curkCarResultWithOtherCar(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue));
+//            System.out.println(myCar.curkCarResultWithOtherCarWithRespawn(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue,botSpawingPosCorrector));
+            System.out.println(myCar.curkCarResultWithOtherCar(map, nModel, cars,botsNeuro,distanceTOwin,MAXTIMEFORGENERATION,timeValue,distanceVelue,colisionValue));
 
             myCar.respawnPosition(map);
             resetCars();
