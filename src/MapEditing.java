@@ -27,8 +27,8 @@ public class MapEditing extends JPanel implements MouseListener {
     Vector2 centerOfScreenWithoutRay = new Vector2(WINDOWHEINGH /2, WINDOWWITH/2);
 
     //neuro
-    int NOFMODEL = 5;
-    int countOfInput = 21;
+    int NOFMODEL = 501;
+    int countOfInput = 22;
     int wightModel = 3;
     int heightOfModel = 11;
 
@@ -73,7 +73,7 @@ public class MapEditing extends JPanel implements MouseListener {
 
 
     // map settings
-    int mapIndex = 2                        ;
+    int mapIndex = 4                        ;
 
     double FOVCOF = 0.7;
 

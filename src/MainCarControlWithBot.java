@@ -8,19 +8,21 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 //    static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
-    static int MAXTIMEFORGENERATION = 2000;
+    static int MAXTIMEFORGENERATION = 3000;
 
-    int distanceTOwin = 0;
+    int distanceTOwin = 100;
+
+
 
     //learn
-    int timeValue = 2;
-    int distanceVelue = 10;
-    int colisionValue = 2000;
+    int timeValue = 10;
+    int distanceVelue = 5;
+    int colisionValue = 3000;
 
     final static int LEARNTYPECOUNT = 11;  // neparni ///////////////////////////
 
 //        double myltipliers[] = {2, 0.2 , 0.02, 0.002, 0.0002,0.00002, 20, 200,2000, };
-    double myltipliers[] = {2, 0.2 , 0.02,   };
+    double myltipliers[] = {2, 0.2 , 0.02};
     //    double myltipliers[] = { 0.02, 0.002, 0.0002, 0.000002,0.00000002,0.000000002};
 //    double myltipliers[] = {0.2 ,2};
     int curentMultp = 0;
@@ -43,15 +45,13 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithoutRay = new Vector2(Config.WINDOWHEINGH /2, Config.WINDOWWITH/2);
 
     //neuro
-    int NOFMODEL = 5;
+    int NOFMODEL = 501;
     int countOfInput = 21;
     int wightModel = 3;
     int heightOfModel = 11;
 
     int CountOfOutput = 5;
 
-    //bot settings
-    int botSettingNeuro[][] = {{4,11,3,11}};
 
 
 
@@ -118,7 +118,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     int countOfALLNeurons;
 
     Car myCar;
-    Car botCar =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, countOfInput -1, radiusVIEW, CarFov);
+    //Car botCar =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, countOfInput -1, radiusVIEW, CarFov);
     Traektoria tr;
 
     Car[] cars = new Car[countOfCar];
@@ -157,7 +157,8 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 //        botCar.moveByNeuroRender(g,cam,map, nModel);
         for(int i = 0; i < countOfCar; i++){
             cars[i].moveByNeuroRender(g,cam, map, botsNeuro[0]);
-//           w cars[i].render(g,cam);
+
+
         }
 
         if(ISCARNEURONS){
@@ -224,15 +225,17 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 //        myCar.render(g, cam);
         if(myCar.isColisionWith(mapWalls) ) {
 //            botCar = new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,100, 50, countOfInput -1, radiusVIEW, CarFov);
+            myCar.respawnPosition(map);
+            resetCars();
 
-            myCar = new Car(new Vector2(map.startStop.p1), 0, wightCar, heightCar,( countOfInput - 1) /2, radiusVIEW, CarFov);
-            setCars();
+//            myCar = new Car(new Vector2(map.startStop.p1), 0, wightCar, heightCar,( countOfInput - 1) /2, radiusVIEW, CarFov);
+
         }
         if(myCar.isColisionWithCars(cars) ) {
-            botCar = new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, countOfInputBot -1, radiusVIEW, CarFov);
+//            botCar = new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, countOfInputBot -1, radiusVIEW, CarFov);
 
-            myCar = new Car(new Vector2(map.startStop.p1), 0, wightCar, heightCar,( countOfInput - 1) /2, radiusVIEW, CarFov);
-            setCars();
+            myCar.respawnPosition(map);
+            resetCars();
         }
 
 
@@ -244,7 +247,13 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     void setCars(){
         for( int i = 0; i < countOfCar; i++){
             cars[i] =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, (countOfInputBot -1), radiusVIEW, CarFov);
-            cars[i].speedLimiter = 27;
+            cars[i].speedLimiter = 20;
+            cars[i].acceleration = 0.4;
+        }
+    }
+    void resetCars(){
+        for( int i = 0; i < countOfCar; i++){
+            cars[i].respawnPositionOffset(map, botSpawingPosCorrector);
         }
     }
 
@@ -347,6 +356,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 
         if (e.getKeyCode() == KeyEvent.VK_L) {
             nModel.setRandom(1,1);
+            nView.n = new NeuroModel(nModel);
             for(int gWeight = 0; gWeight < countOfAllWeght; gWeight++){
                 for(int i = 0; i < LEARNTYPECOUNT; i++) {
                     //neuroModelsWeightsLearn[gWeight][i].setRandom(1,1);

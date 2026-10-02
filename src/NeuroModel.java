@@ -22,9 +22,9 @@ public class NeuroModel {
 
     double normalize(double x){
 //        double result = 1 / (1 + Math.pow(Math.E, -x));
-
-//        double result = Math.tanh(x);
-//        return result;
+//
+//        double result2 = Math.tanh(x);
+//        return result2;
         return x;
     }
 

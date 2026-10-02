@@ -1,3 +1,4 @@
+import javax.swing.plaf.synth.SynthRadioButtonMenuItemUI;
 import java.awt.*;
 
 public class Vector2 {
@@ -82,6 +83,13 @@ public class Vector2 {
     void drawPointWithZoom(int radius , Graphics g , Camera cam, Color color){
         g.setColor(color);
         g.fillOval( (int) (((this.x * cam.scale) - (radius * cam.scale/2) - cam.position.x) ), (int) (((this.y * cam.scale) - (radius * cam.scale/2) - cam.position.y)), (int)(radius * cam.scale),(int)(radius * cam.scale));
+    }
+    void drawPointWithZoomText(int radius , Graphics g , Camera cam, Color color, double text){
+        g.setColor(color);
+        g.fillOval( (int) (((this.x * cam.scale) - (radius * cam.scale/2) - cam.position.x) ), (int) (((this.y * cam.scale) - (radius * cam.scale/2) - cam.position.y)), (int)(radius * cam.scale),(int)(radius * cam.scale));
+        g.setColor(Color.BLACK);
+        g.setFont( g.getFont().deriveFont((float) (10 * cam.scale)));
+        g.drawString(String.valueOf(String.format("%.3f", text)),  (int) (((this.x * cam.scale) - (radius * cam.scale/2) - cam.position.x)),(int) (((this.y * cam.scale) - (radius * cam.scale/2) - cam.position.y)));
     }
     void drawLineWithZoom(Graphics g, Camera cam, Color color, Vector2 otherPoint){
         g.setColor(color);

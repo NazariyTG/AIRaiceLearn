@@ -1,32 +1,36 @@
+import java.util.stream.IntStream;
+
 public class MainLearnWithBot {
 
 
 
     public static void main(String[] args) {
 
-        int maxTimeGeneration = 2500;
+        int maxTimeGeneration = 3000;
 
         //learn
-        int timeValue = 5;
+        int timeValue = 30;
         int distanceVelue = 5;
-        int colisionValue = 30000;
+        int colisionValue = 3000;
 
-        int LEARNTYPECOUNT = 5;  // neparni ///////////////////////////
+        int distanceToWin = 100;
+
+        int LEARNTYPECOUNT = 3;  // neparni ///////////////////////////
 
         double myltipliers[] = {2, 0.2 , 0.02 };
 //        double myltipliers[] = {2, 0.2 , 0.02 ,20};
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
 //    double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
 
-        boolean ISITSTARTRANDOM = false; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
+        boolean ISITSTARTRANDOM = false ; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
         int MaxFaileRandom = 10000;
         // spawn
-        boolean ISSPAWNPOSITIONRANDOM = true;
+        boolean ISSPAWNPOSITIONRANDOM = false;
         int radiusSpawnRanmon = 20;
 
 
         //neuro
-        int NOFMODEL = 5;
+        int NOFMODEL = 501;
         int countOfInput = 21;
         int wightModel = 3;
         int heightOfModel = 11;
@@ -40,7 +44,7 @@ public class MainLearnWithBot {
 
        double myCarAcceleration = 0.6;
 
-       int botSpeedLimeter = 27;
+       int botSpeedLimeter = 20;
        double botAccereration = 0.4;
 
         int wightCar = 100;
@@ -63,7 +67,7 @@ public class MainLearnWithBot {
         int radiusVIEW = 700;
         int carFov = 240;
 
-        int distanceToWin = 100;
+
 
 
         NeuroModel nModel = new NeuroModel(countOfInput,wightModel,heightOfModel,CountOfOutput);
@@ -80,7 +84,7 @@ public class MainLearnWithBot {
 
         System.out.println("countOfAllWeght: " + countOfAllWeght + " countOfALLNeurons: " + countOfALLNeurons);
         int curentGeneration =0;
-        int curentChangeIndex = 0;
+
 
         double bestResultView = Double.MAX_VALUE;
 
@@ -93,8 +97,23 @@ public class MainLearnWithBot {
         cars[0] =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, (countOfInputBot - 1), radiusVIEW, carFov);
 //                            botcar = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
         cars[0].speedLimiter = botSpeedLimeter;
+        cars[0].acceleration = 0.4;
 //                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
         bestResultView = car.curkCarResultWithOtherCar(map, nModel,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
+
+
+
+
+        Car[] myCars = new Car[LEARNTYPECOUNT];
+        for(int i = 0; i < myCars.length; i++){
+            myCars[i] = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
+        }
+        NeuroModel[] myNeuros = new NeuroModel[LEARNTYPECOUNT];
+        for(int i = 0; i < myNeuros.length; i++){
+            myNeuros[i] = new NeuroModel(nModel);
+        }
+
+//        double[] results = new double[LEARNTYPECOUNT];
 
 //        bestResultView = car.curkCarResultWithOtherCar(map, nModel, cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
         while(ISITSTARTRANDOM){
@@ -102,15 +121,9 @@ public class MainLearnWithBot {
             NeuroModel nRandom = new NeuroModel(nModel);
             nRandom.setRandom(1,1);
 
+            car.respawnPosition(map);
+            cars[0].respawnPositionOffset(map, botSpawingPosCorrector);
 
-            car = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-//                            Car[] cars = new Car[countOfCar];
-
-            car.acceleration = myCarAcceleration;
-            cars[0] =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, (countOfInputBot - 1), radiusVIEW, carFov);
-//                            botcar = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-            cars[0].speedLimiter = botSpeedLimeter;
-            cars[0].acceleration = botAccereration;
 
 //                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
             double currentResult = car.curkCarResultWithOtherCar(map, nRandom,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
@@ -136,7 +149,7 @@ public class MainLearnWithBot {
         }
 
         System.out.println("Now Leanring");
-        nModel.saveNeruonModel(NOFMODEL);
+//        nModel.saveNeruonModel(NOFMODEL);
 
         Vector2 spawnRandomOffset = new Vector2(Math.random() * radiusSpawnRanmon,Math.random() * radiusSpawnRanmon);
         while(curentGeneration < maxGeneration) {
@@ -151,69 +164,60 @@ public class MainLearnWithBot {
                     bestResultView = Double.MAX_VALUE;
                 }
 
-                for (curentChangeIndex = 0; curentChangeIndex < countOfALLNeurons + countOfAllWeght; curentChangeIndex++) {
+                for (int curentChangeIndex = 0; curentChangeIndex < countOfALLNeurons + countOfAllWeght; curentChangeIndex++) {
                     double[] results = new double[LEARNTYPECOUNT];
 
 //                    System.out.println(curentChangeIndex * 100 / (countOfALLNeurons + countOfAllWeght));
 
                     if (curentChangeIndex < countOfAllWeght) {
 
-                        for (int i = 0; i < LEARNTYPECOUNT; i ++){
-                            NeuroModel neurochanged = new NeuroModel(nModel);
-                            neurochanged.setWeith(curentChangeIndex, ((i - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getWeith(curentChangeIndex));
-                            if(ISSPAWNPOSITIONRANDOM)
-                            car = new Car((new Vector2(map.startStop.p1)).subR(spawnRandomOffset),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-                            else
-                            car = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-//                            Car[] cars = new Car[countOfCar];
-                            car.acceleration = myCarAcceleration;
-                            cars[0] =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, (countOfInputBot - 1), radiusVIEW, carFov);
-//                            botcar = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-                            cars[0].speedLimiter = botSpeedLimeter;
-                            cars[0].acceleration = botAccereration;
-//                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-                            results[i] = car.curkCarResultWithOtherCar(map, neurochanged,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-
-
+                        for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                            myNeuros[i] = new NeuroModel(nModel);
+                            myNeuros[i].setWeith(curentChangeIndex, ((i - ((LEARNTYPECOUNT - 1.0) / 2)) * currenMylt) + nModel.getWeith(curentChangeIndex));
 
                         }
-                        double minV = results[(int) (LEARNTYPECOUNT - 1.0)  / 2];
-                        int minI= (int) (LEARNTYPECOUNT - 1.0)  / 2;
-                        for(int i = 0; i < results.length; i++){
-                            if(results[i] < minV){
+
+                        results = IntStream.range(0, LEARNTYPECOUNT).parallel().mapToDouble(i -> {
+                            // 1. Беремо або готуємо об'єкт для поточного індексу i
+
+
+                            double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, botSpawingPosCorrector);
+                            System.out.println(result);
+                            // 3. Повертаємо результат
+                            return result;
+                        }).toArray();
+
+                        double minV = results[0];
+                        int minI = 0;
+                        for (int i = 0; i < results.length; i++) {
+                            if (results[i] < minV) {
                                 minV = results[i];
                                 minI = i;
                             }
                         }
-                        if (minV < bestResultView ) {
+                        if (minV < bestResultView) {
                             bestResultView = minV;
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
-                        nModel.setWeith(curentChangeIndex, ((minI - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getWeith(curentChangeIndex));
 
-
+                        nModel = new NeuroModel(myNeuros[minI]);
                     }else {
-                        for (int i = 0; i < LEARNTYPECOUNT; i ++){
-                            NeuroModel neurochanged = new NeuroModel(nModel);
-                            neurochanged.setB(curentChangeIndex - countOfAllWeght, ((i - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getB(curentChangeIndex - countOfAllWeght));
-                            car = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-//                            Car[] cars = new Car[countOfCar];
-                            car.acceleration  = myCarAcceleration;
-                            cars[0] =  new Car(new Vector2(map.startStop.p1.addR(botSpawingPosCorrector)),  0 ,wightCar, heightCar, (countOfInputBot - 1), radiusVIEW, carFov);
-//                            botcar = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput - 1) / 2, radiusVIEW, carFov);
-                            cars[0].speedLimiter = botSpeedLimeter;
-                            cars[0].acceleration = botAccereration;
-//                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-                            results[i] = car.curkCarResultWithOtherCar(map, neurochanged,cars,botsNeuro,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-
-
-
-                            //                            car = new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, countOfInput - 1, radiusVIEW, carFov);
-
-//                            results[i] = car.curkCarResult(map, neurochanged,distanceToWin,maxTimeGeneration,timeValue,distanceVelue,colisionValue);
-
+                        for (int i = 0; i < LEARNTYPECOUNT; i++) {
+                            myNeuros[i] = new NeuroModel(nModel);
+                            myNeuros[i].setB(curentChangeIndex - countOfAllWeght, ((i - ((LEARNTYPECOUNT - 1.0) / 2)) * currenMylt) + nModel.getB(curentChangeIndex - countOfAllWeght));
 
                         }
+
+                        results = IntStream.range(0, LEARNTYPECOUNT).parallel().mapToDouble(i -> {
+                            // 1. Беремо або готуємо об'єкт для поточного індексу i
+
+
+                            double result = myCars[i].curkCarResultWithOtherCarWithRespawn(map, myNeuros[i], cars, botsNeuro, distanceToWin, maxTimeGeneration, timeValue, distanceVelue, colisionValue, botSpawingPosCorrector);
+
+                            // 3. Повертаємо результат
+                            return result;
+                        }).toArray();
+
                         double minV = results[0];
                         int minI= 0;
                         for(int i = 0; i < results.length; i++){
@@ -226,26 +230,29 @@ public class MainLearnWithBot {
                             bestResultView = minV;
                             System.out.println("best result " + minV + " current mylt " + currenMylt);
                         }
-                        nModel.setB(curentChangeIndex - countOfAllWeght, ((minI - ((LEARNTYPECOUNT - 1.0)  / 2)) * currenMylt)  + nModel.getB(curentChangeIndex - countOfAllWeght));
+                        nModel = new NeuroModel(myNeuros[minI]);
 
                     }
-
-
-
                 }
-                nModel.saveNeruonModel(NOFMODEL);
+
+
+
+//                nModel.saveNeruonModel(NOFMODEL);
 
 
             }
 
 
-            nModel.saveNeruonModel(NOFMODEL);
+//            nModel.saveNeruonModel(NOFMODEL);
 
         }
 
 
 
     }
+
+
+
 
 
 }

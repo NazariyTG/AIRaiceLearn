@@ -36,13 +36,13 @@ public class Main extends JPanel implements MouseListener{
 
     boolean isControlCar = false;
 
-    int COUNTOFRAYS = 10;
+    int COUNTOFRAYS = 11;
 
     int CarFov = 240; /// 240
 
     int radiusVIEW = 700;
 
-    int mapIndex = 0;
+    int mapIndex = 4;
 
 
     boolean isRenderMap = true;
@@ -57,14 +57,14 @@ public class Main extends JPanel implements MouseListener{
     boolean isMapEditinEctive = true;
     int activeWall= 1;
 
-    int CountOfOutput = 4;
+    int CountOfOutput = 5;
 
     NeuroModel nModel = new NeuroModel(COUNTOFRAYS,4,10,CountOfOutput);
 
     double bestResult = Double.MAX_VALUE;
     int coutSameNeurons;
 
-    int[] mapsIndexes = {11,12,13,14};
+    int[] mapsIndexes = {4};
 
     Map[] maps = new Map[mapsIndexes.length];
 
@@ -659,9 +659,7 @@ public class Main extends JPanel implements MouseListener{
 
     public Main() {
         map.readFromFile("map" +mapIndex+ ".txt");
-        for(int i = 0; i < mapsIndexes.length; i++){
-            maps[i].readFromFile("map" +mapsIndexes[i]+ ".txt");
-        }
+
 
 
         mapWalls.addAll(map.wall1);
