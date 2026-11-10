@@ -11,6 +11,7 @@ public class MapEditing extends JPanel implements MouseListener {
     int CAMERAMODE = 1; /// 1 -> on car
 
 
+    int mapIndex = 34;
 
 
     boolean ISRENDERMAP= true;
@@ -34,13 +35,21 @@ public class MapEditing extends JPanel implements MouseListener {
 
     int CountOfOutput = 5;
 
-    //bot settings
-    int botSettingNeuro[][] = {{4,11,3,11}};
 
     //learn
     int timeValue = 2;
     int distanceVelue = 10;
     int colisionValue = 2000;
+
+
+    boolean ISITSTARTRANDOM = true ; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
+    int MaxFaileRandom = 10000;
+    // spawn
+    boolean ISSPAWNPOSITIONRANDOM = true;
+    int radiusSpawnRanmon = 20;
+
+    Vector2 spawnRandom = new Vector2(0,0);
+    int generationToStarntRandomPositon = 2;
 
     static int MAXTIMEFORGENERATION = 2000;
 
@@ -70,10 +79,6 @@ public class MapEditing extends JPanel implements MouseListener {
     //botsNeuro[0].readFromFile("N_" + NOFMODELBot + "_" + botsNeuro[0].countOfInpunts + "_" + botsNeuro[0].wightOfModel + "_" +botsNeuro[0].heightOfModel + "_" + botsNeuro[0].countofOutput);
 
 
-
-
-    // map settings
-    int mapIndex = 31                        ;
 
     double FOVCOF = 0.7;
 
@@ -192,7 +197,7 @@ public class MapEditing extends JPanel implements MouseListener {
     }
 
     public MapEditing() {
-        map.readFromFile("map" +mapIndex+ ".txt");
+        map.readFromFileCheckVersion("map" +mapIndex+ ".txt");
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
         myCar =  new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput -1)/2, radiusVIEW, CarFov);
@@ -225,7 +230,7 @@ public class MapEditing extends JPanel implements MouseListener {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!isMapEditinEctive & (e.getButton() == MouseEvent.BUTTON1)){
+                if (isMapEditinEctive & (e.getButton() == MouseEvent.BUTTON1)){
                     map.addWall(activeWall, new Vector2(e.getPoint().getLocation().x,e.getPoint().getLocation().y), cam);
                 }
 //                if (isMapEditinEctive & (e.getButton() == MouseEvent.BUTTON1)){
@@ -239,9 +244,12 @@ public class MapEditing extends JPanel implements MouseListener {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
+
                     leftPressed = true;
-                    map.selectPoint( (new Vector2(e.getPoint().getLocation().x,e.getPoint().getLocation().y)).addR(cam.position));
-                    System.out.println("SelectPoint");
+                    if(ISMOVINGPOINT) {
+                        map.selectPoint((new Vector2(e.getPoint().getLocation().x, e.getPoint().getLocation().y)).addR(cam.position));
+                        System.out.println("SelectPoint");
+                    }
 
                 }
                 if (e.getButton() == MouseEvent.BUTTON3) {
@@ -270,7 +278,7 @@ public class MapEditing extends JPanel implements MouseListener {
             public void keyPressed(KeyEvent e) {
                 // S — зберегти
                 if (e.getKeyCode() == KeyEvent.VK_I) {
-                    map.safeToFile("map"+mapIndex+ ".txt");
+                    map.safeToFileV2("map"+mapIndex+ ".txt");
                     System.out.println("Map saved");
                 }
                 if (e.getKeyCode() == KeyEvent.VK_E) {
@@ -283,7 +291,7 @@ public class MapEditing extends JPanel implements MouseListener {
                     }
                 }
                 if (e.getKeyCode() == KeyEvent.VK_O) {
-                    map.readFromFile("map" +mapIndex+ ".txt");
+                    map.readFromFileV2("map" +mapIndex+ ".txt");
                     System.out.println("Map open");
                 }
                 if (e.getKeyCode() == KeyEvent.VK_K) {
@@ -373,6 +381,11 @@ public class MapEditing extends JPanel implements MouseListener {
 
                     System.out.println("Map Editing : Wall_3");
                 }
+                if (e.getKeyCode() == KeyEvent.VK_4) {
+                    if (isMapEditinEctive) activeWall = 4;
+
+                    System.out.println("Map Editing : Wall_4");
+                }
             }
         });
     }
@@ -384,8 +397,6 @@ public class MapEditing extends JPanel implements MouseListener {
         frame.setSize(WINDOWHEINGH, WINDOWWITH);
         frame.add(new MapEditing());
         frame.setVisible(true);
-
-
 
     }
 

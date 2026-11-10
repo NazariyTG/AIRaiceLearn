@@ -9,13 +9,13 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
 //    static int WINDOWWITH = 1000;
 
     int CAMERAMODE = 1; /// 1 -> on car
-    static int MAXTIMEFORGENERATION = 3000;
+    static int MAXTIMEFORGENERATION = 2000;
 
 
 
     //learn
     int timeValue = 10;
-    int distanceVelue = 1;
+    int distanceVelue = 10;
     int colisionValue = 3000;
 
     int distanceTOwin = 100;
@@ -46,10 +46,10 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     Vector2 centerOfScreenWithoutRay = new Vector2(Config.WINDOWHEINGH /2, Config.WINDOWWITH/2);
 
     //neuro
-    int NOFMODEL = 503;
+    int NOFMODEL = 5;
     int countOfInput = 21;
     int wightModel = 3;
-    int heightOfModel = 11;
+    int heightOfModel =11 ;
 
     int CountOfOutput = 5;
 
@@ -277,7 +277,7 @@ public class MainCarControlWithBot extends JPanel implements MouseListener{
     }
 
     public MainCarControlWithBot() {
-        map.readFromFile("map" +mapIndex+ ".txt");
+        map.readFromFileCheckVersion("map" +mapIndex+ ".txt");
         mapWalls.addAll(map.wall1);
         mapWalls.addAll(map.wall2);
         myCar =  new Car(new Vector2(map.startStop.p1),  0 ,wightCar, heightCar, (countOfInput -1)/2, radiusVIEW, CarFov);

@@ -6,12 +6,12 @@ public class MainLearnWithBot {
 
     public static void main(String[] args) {
 
-        int maxTimeGeneration = 3000;
+        int maxTimeGeneration = 2000;
 
         //learn
-        int timeValue = 10;
-        int distanceVelue = 1;
-        int colisionValue = 3000;
+        int timeValue = 30;
+        int distanceVelue = 10;
+        int colisionValue = 1000;
 
         int distanceToWin = 100;
 
@@ -22,7 +22,7 @@ public class MainLearnWithBot {
 //          double myltipliers[] = {0.0002, 0.000002,0.00000002,0.000000002 ,0.02, 0.002};
 //    double myltipliers[] = {0.2 ,2, 0.02 , 0.0002 , 0.002};
 
-        boolean ISITSTARTRANDOM = false ; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
+        boolean ISITSTARTRANDOM = true ; ///////////// !!!!!!!!!!!!!!!!!!!!!!!!
         int MaxFaileRandom = 10000;
         // spawn
         boolean ISSPAWNPOSITIONRANDOM = true;
@@ -36,10 +36,10 @@ public class MainLearnWithBot {
 
 
         //neuro
-        int NOFMODEL = 503;
+        int NOFMODEL = 511;
         int countOfInput = 21;
-        int wightModel = 3;
-        int heightOfModel = 11;
+        int wightModel = 8;
+        int heightOfModel = 8;
 
         int CountOfOutput = 5;
 

@@ -3,6 +3,7 @@ import java.awt.*;
 public class NeuronsView extends Object2d{
 
     NeuroModel n;
+
     Camera cam;
 
 
